@@ -17,7 +17,11 @@ public class RegisterController {
     public RegisterController(UserService userService) {
         this.userService = userService;
     }
-
+    @GetMapping("/register")
+    public String showForm(Model model) {
+        model.addAttribute("registerRequest", new RegisterRequest(null, null, null));
+        return "register";
+    }
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute RegisterRequest registerRequest,
