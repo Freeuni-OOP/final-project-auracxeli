@@ -1,4 +1,4 @@
-package user;
+package com.auracxeli.user;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
