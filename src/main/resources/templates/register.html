@@ -5,37 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>რეგისტრაცია</title>
     <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet" />
+    <link th:href="@{/css/auth.css}"   href="/static/css/auth.css"   rel="stylesheet" />
 </head>
 <body>
-<main>
-    <section class="container">
-        <h1>რეგისტრაცია</h1>
-
-        <form th:object="${registerRequest}" th:action="@{/register}" method="post" novalidate>
-
-            <div>
-                <label for="username">მომხმარებლის სახელი</label>
-                <input type="text" id="username" th:field="*{username}" />
-                <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-            </div>
-
-            <div>
-                <label for="email">ელფოსტა</label>
-                <input type="email" id="email" th:field="*{email}" />
-                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-            </div>
-
-            <div>
-                <label for="password">პაროლი</label>
-                <input type="password" id="password" th:field="*{password}" />
-                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-            </div>
-
-            <button type="submit">რეგისტრაცია</button>
-        </form>
-
-        <p>უკვე გაქვს ანგარიში? <a th:href="@{/login}">შესვლა</a></p>
-    </section>
-</main>
+    <header class="site-header">
+        <div class="container"></div>
+    </header>
+    <main>
+        <section class="auth">
+            <h1>რეგისტრაცია</h1>
+            <form th:object="${registerRequest}" th:action="@{/register}" method="post" novalidate>
+                <div class="field">
+                    <label for="username">მომხმარებლის სახელი</label>
+                    <input type="text" id="username" th:field="*{username}" />
+                    <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+                </div>
+                <div class="field">
+                    <label for="email">ელფოსტა</label>
+                    <input type="email" id="email" th:field="*{email}" />
+                    <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+                <div class="field">
+                    <label for="password">პაროლი</label>
+                    <input type="password" id="password" th:field="*{password}" />
+                    <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                </div>
+                <button type="submit">რეგისტრაცია</button>
+            </form>
+            <p class="alt">უკვე გაქვს ანგარიში? <a th:href="@{/login}">შესვლა</a></p>
+        </section>
+    </main>
 </body>
 </html>
