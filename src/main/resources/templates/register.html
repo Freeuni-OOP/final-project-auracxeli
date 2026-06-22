@@ -15,6 +15,7 @@
         <section class="auth">
             <h1>რეგისტრაცია</h1>
             <form th:object="${registerRequest}" th:action="@{/register}" method="post" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="field">
                     <label for="username">მომხმარებლის სახელი</label>
                     <input type="text" id="username" th:field="*{username}" />
