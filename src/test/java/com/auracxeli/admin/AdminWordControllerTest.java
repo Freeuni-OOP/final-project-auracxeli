@@ -4,16 +4,19 @@ import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.user.Role;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
+import com.auracxeli.wordle.WordleWord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -54,7 +57,7 @@ class AdminWordControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void getWords_isAccessibleToAdmin_andShowsForm() throws Exception {
-        when(adminWordService.listWords()).thenReturn(List.of());
+        when(adminWordService.upcomingWords()).thenReturn(List.of());
 
         mockMvc.perform(get("/admin/words"))
                 .andExpect(status().isOk())
@@ -71,6 +74,9 @@ class AdminWordControllerTest {
 
     @Test
     void postWord_validSubmit_savesAndRedirects() throws Exception {
+        when(adminWordService.addWord(eq("ბურთი"), any(), any()))
+                .thenReturn(new WordleWord("ბურთი", LocalDate.now(ZoneOffset.UTC), null));
+
         mockMvc.perform(post("/admin/words")
                         .with(authentication(adminAuth()))
                         .with(csrf())
@@ -84,7 +90,7 @@ class AdminWordControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void postWord_invalidSubmit_showsErrorsAndDoesNotSave() throws Exception {
-        when(adminWordService.listWords()).thenReturn(List.of());
+        when(adminWordService.upcomingWords()).thenReturn(List.of());
 
         mockMvc.perform(post("/admin/words")
                         .with(csrf())
@@ -97,9 +103,9 @@ class AdminWordControllerTest {
     }
 
     @Test
-    void postWord_duplicateWord_showsErrorOnWordField() throws Exception {
-        when(adminWordService.listWords()).thenReturn(List.of());
-        doThrow(new DuplicateWordException("word", "ეს სიტყვა უკვე დამატებულია"))
+    void postWord_uniquenessConflict_showsErrorOnWordField() throws Exception {
+        when(adminWordService.upcomingWords()).thenReturn(List.of());
+        doThrow(new DuplicateWordException("word", "ეს სიტყვა გამოყენებულია ბოლო 60 დღეში"))
                 .when(adminWordService).addWord(eq("ბურთი"), any(), any());
 
         mockMvc.perform(post("/admin/words")
