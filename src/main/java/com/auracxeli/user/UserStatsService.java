@@ -40,12 +40,12 @@ public class UserStatsService {
                 gamesPlayed,
                 wins,
                 winPercent,
-                currentStreak(finished, today),
-                maxStreak(finished)
+                wordleCurrentStreak(finished, today),
+                wordleMaxStreak(finished)
         );
     }
 
-    private int currentStreak(List<WordleSession> finished, LocalDate today) {
+    private int wordleCurrentStreak(List<WordleSession> finished, LocalDate today) {
         if (finished.isEmpty()) {
             return 0;
         }
@@ -69,7 +69,7 @@ public class UserStatsService {
         return streak;
     }
 
-    private int maxStreak(List<WordleSession> finished) {
+    private int wordleMaxStreak(List<WordleSession> finished) {
         int max = 0;
         int run = 0;
         LocalDate previousWin = null;
