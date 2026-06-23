@@ -6,17 +6,18 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
-@Testcontainers
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public abstract class AbstractIntegrationTest {
 
-    @Container
+    // Singleton container shared across all test classes; avoids exhausting CI runner memory.
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.4");
+
+    static {
+        MYSQL.start();
+    }
 
     @DynamicPropertySource
     static void registerDataSourceProperties(final DynamicPropertyRegistry registry) {
