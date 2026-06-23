@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,6 +101,22 @@ class WordleSessionRepositoryTest {
                 wordleSessionRepository.findByUserIdAndPuzzleDate(testUser.getId(), saved.getPuzzleDate());
         assertThat(reloaded).isPresent();
         assertThat(reloaded.get().getOutcome()).isEqualTo(WordleOutcome.WON);
+    }
+
+    @Test
+    void findByUserIdOrderByPuzzleDateAsc_returnsSessionsOldestFirst() {
+        wordleSessionRepository.save(new WordleSession(testUser, LocalDate.of(2026, 1, 3)));
+        wordleSessionRepository.save(new WordleSession(testUser, LocalDate.of(2026, 1, 1)));
+        wordleSessionRepository.save(new WordleSession(testUser, LocalDate.of(2026, 1, 2)));
+
+        List<WordleSession> result =
+                wordleSessionRepository.findByUserIdOrderByPuzzleDateAsc(testUser.getId());
+        assertThat(result)
+                .extracting(WordleSession::getPuzzleDate)
+                .containsExactly(
+                        LocalDate.of(2026, 1, 1),
+                        LocalDate.of(2026, 1, 2),
+                        LocalDate.of(2026, 1, 3));
     }
 
 }
