@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ადმინი — სიტყვები</title>
+    <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet" />
+    <link th:href="@{/css/auth.css}"   href="/static/css/auth.css"   rel="stylesheet" />
+</head>
+<body>
+<header class="site-header">
+    <div class="container"></div>
+</header>
+<main class="container">
+    <section class="auth">
+        <h1>სიტყვის დამატება</h1>
+        <form th:object="${addWordRequest}" th:action="@{/admin/words}" method="post" novalidate>
+            <div class="field">
+                <label for="word">სიტყვა (5 ქართული ასო)</label>
+                <input type="text" id="word" th:field="*{word}" maxlength="5" />
+                <span class="error" th:if="${#fields.hasErrors('word')}" th:errors="*{word}"></span>
+            </div>
+            <div class="field">
+                <label for="scheduledDate">თარიღი (არასავალდებულო)</label>
+                <input type="date" id="scheduledDate" th:field="*{scheduledDate}" />
+                <span class="error" th:if="${#fields.hasErrors('scheduledDate')}" th:errors="*{scheduledDate}"></span>
+            </div>
+            <button type="submit">დამატება</button>
+        </form>
+    </section>
+
+    <section class="container">
+        <h2>არსებული სიტყვები</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>სიტყვა</th>
+                <th>თარიღი</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="w : ${words}">
+                <td th:text="${w.id}">1</td>
+                <td th:text="${w.word}">ბურთი</td>
+                <td th:text="${w.scheduledDate} ?: '—'">2026-06-23</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(words)}">
+                <td colspan="3">სია ცარიელია</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
