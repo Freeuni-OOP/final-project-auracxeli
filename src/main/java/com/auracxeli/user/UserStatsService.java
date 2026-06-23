@@ -1,6 +1,6 @@
 package com.auracxeli.user;
 
-import com.auracxeli.user.dto.UserStatsDto;
+import com.auracxeli.user.dto.WordleStatsDto;
 import com.auracxeli.wordle.WordleOutcome;
 import com.auracxeli.wordle.WordleSession;
 import com.auracxeli.wordle.WordleSessionRepository;
@@ -19,12 +19,12 @@ public class UserStatsService {
         this.sessionRepository = sessionRepository;
     }
 
-    public UserStatsDto getStats(Long userId) {
+    public WordleStatsDto getWordleStats(Long userId) {
         //we made puzzle dates UTC so i will use UTC here too.
-        return getStats(userId, LocalDate.now(ZoneOffset.UTC));
+        return getWordleStats(userId, LocalDate.now(ZoneOffset.UTC));
     }
 
-    UserStatsDto getStats(Long userId, LocalDate today) {
+    WordleStatsDto getWordleStats(Long userId, LocalDate today) {
         //exlclude nonfinished games aka IN_progress here from calculations.
         List<WordleSession> finished = sessionRepository.findByUserIdOrderByPuzzleDateAsc(userId).stream()
                 .filter(session -> session.getOutcome() != WordleOutcome.IN_PROGRESS)
@@ -36,7 +36,7 @@ public class UserStatsService {
                 .count();
         int winPercent = gamesPlayed == 0 ? 0 : Math.round((float) wins * 100 / gamesPlayed);
 
-        return new UserStatsDto(
+        return new WordleStatsDto(
                 gamesPlayed,
                 wins,
                 winPercent,

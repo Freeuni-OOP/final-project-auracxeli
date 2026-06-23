@@ -23,24 +23,29 @@
         <h1 th:text="${username}">Profile</h1>
         <p class="subtitle">შენი სტატისტიკა</p>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-value" th:text="${stats.gamesPlayed}">0</span>
-                <span class="stat-label">ნათამაშები</span>
+        <section class="game-stats">
+            <h2 class="game-title">Wordle</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${wordleStats.gamesPlayed}">0</span>
+                    <span class="stat-label">ნათამაშები</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="|${wordleStats.winPercent}%|">0%</span>
+                    <span class="stat-label">მოგების პროცენტულობა</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${wordleStats.currentStreak}">0</span>
+                    <span class="stat-label">მიმდინარე Streak</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${wordleStats.maxStreak}">0</span>
+                    <span class="stat-label">მაქსიმალური Streak</span>
+                </div>
             </div>
-            <div class="stat-card">
-                <span class="stat-value" th:text="|${stats.winPercent}%|">0%</span>
-                <span class="stat-label">მოგების პროცენტულობა</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" th:text="${stats.currentStreak}">0</span>
-                <span class="stat-label">მიმდინარე Streak</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" th:text="${stats.maxStreak}">0</span>
-                <span class="stat-label">მაქსიმალური Streak</span>
-            </div>
-        </div>
+        </section>
+
+        <!-- Connections stats section will be added here later -->
     </section>
 </main>
 </body>

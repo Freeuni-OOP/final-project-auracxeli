@@ -1,6 +1,6 @@
 package com.auracxeli.user;
 
-import com.auracxeli.user.dto.UserStatsDto;
+import com.auracxeli.user.dto.WordleStatsDto;
 import com.auracxeli.wordle.WordleSession;
 import com.auracxeli.wordle.WordleSessionRepository;
 import org.junit.jupiter.api.Test;
@@ -29,10 +29,10 @@ class UserStatsServiceTest {
 
 
     @Test
-    void noStatsWhenNoGamesPlayedTest() {
+    void wordleNoStatsWhenNoGamesPlayedTest() {
         givenHistory(List.of());
 
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.gamesPlayed()).isZero();
         assertThat(stats.wins()).isZero();
         assertThat(stats.winPercent()).isZero();
@@ -41,10 +41,10 @@ class UserStatsServiceTest {
     }
 
     @Test
-    void allWinsBeforeTodayTest() {
+    void wordleAllWinsBeforeTodayTest() {
         givenHistory(List.of(win(2), win(1), win(0)));
 
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.gamesPlayed()).isEqualTo(3);
         assertThat(stats.wins()).isEqualTo(3);
         assertThat(stats.winPercent()).isEqualTo(100);
@@ -53,11 +53,11 @@ class UserStatsServiceTest {
     }
 
     @Test
-    void streakBreak_maxKeepsLongestRun_currentReflectsLatestRun() {
+    void wordleStreakBreakButMaxKeepsLongestRunAndCurrKeepsLastRunTest() {
         // WON WON WON LOST WON(today)
         givenHistory(List.of(win(4), win(3), win(2), loss(1), win(0)));
 
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.gamesPlayed()).isEqualTo(5);
         assertThat(stats.wins()).isEqualTo(4);
         assertThat(stats.winPercent()).isEqualTo(80);
@@ -66,10 +66,10 @@ class UserStatsServiceTest {
     }
 
     @Test
-    void lossTodayResetsCurrentStreakTest() {
+    void wordleLossTodayResetsCurrentStreakTest() {
         givenHistory(List.of(win(2), win(1), loss(0)));
 
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
 
         assertThat(stats.gamesPlayed()).isEqualTo(3);
         assertThat(stats.wins()).isEqualTo(2);
@@ -79,10 +79,10 @@ class UserStatsServiceTest {
     }
 
     @Test
-    void lastWinOlderThanYesterdayTest() {
+    void wordleLastWinOlderThanYesterdayTest() {
         givenHistory(List.of(win(13), win(12)));
 
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.gamesPlayed()).isEqualTo(2);
         assertThat(stats.wins()).isEqualTo(2);
         assertThat(stats.winPercent()).isEqualTo(100);
@@ -91,27 +91,27 @@ class UserStatsServiceTest {
     }
 
     @Test
-    void missingCalendarDayBreaksCurrentStreakTest() {
+    void wordleMissingCalendarDayBreaksCurrentStreakTest() {
         // WON two days ago, no game yesterday, WON today.
         givenHistory(List.of(win(2), win(0)));
 
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.currentStreak()).isEqualTo(1);
         assertThat(stats.maxStreak()).isEqualTo(1);
     }
 
     @Test
-    void winYesterdayAndNoWinTodayTest() {
+    void wordleWinYesterdayAndNoWinTodayTest() {
         givenHistory(List.of(win(2), win(1)));
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.currentStreak()).isEqualTo(2);
         assertThat(stats.maxStreak()).isEqualTo(2);
     }
 
     @Test
-    void inProgressNotIncludedAndDoesNotBreakStreakTest() {
+    void wordleInProgressNotIncludedAndDoesNotBreakStreakTest() {
         givenHistory(List.of(win(1), inProgress(0)));
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.gamesPlayed()).isEqualTo(1);
         assertThat(stats.wins()).isEqualTo(1);
         assertThat(stats.winPercent()).isEqualTo(100);
@@ -120,9 +120,9 @@ class UserStatsServiceTest {
     }
 
     @Test
-    void winPercentageRoundedTest() {
+    void wordleWinPercentageRoundedTest() {
         givenHistory(List.of(win(2), loss(1), loss(0)));
-        UserStatsDto stats = userStatsService.getStats(USER_ID, TODAY);
+        WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.winPercent()).isEqualTo(33); // 1/3 rounded
     }
 

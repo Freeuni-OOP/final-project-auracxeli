@@ -66,3 +66,8 @@
     font-size: 14px;
     color: var(--muted);
 }
+
+.game-title {
+    font-size: 20px;
+    font-weight: 800;
+}
