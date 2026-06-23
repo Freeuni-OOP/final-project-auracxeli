@@ -9,4 +9,7 @@ public interface WordleWordRepository extends JpaRepository<WordleWord, Long> {
 
     // Spring Data turns this into: SELECT ... FROM wordle_words WHERE scheduled_date = ?
     Optional<WordleWord> findByScheduledDate(LocalDate scheduledDate);
+
+    // Used by the admin add-word form to reject duplicates.
+    boolean existsByWord(String word);
 }
