@@ -10,7 +10,7 @@
 <body>
 <header class="site-header">
     <div class="container">
-        <a class="brand" th:href="@{/}">WORDLE</a>
+        <a class="brand" th:href="@{/}">Profile</a>
         <form th:action="@{/logout}" method="post" class="logout-form">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit">გასვლა</button>
@@ -20,7 +20,7 @@
 
 <main>
     <section class="profile container">
-        <h1 th:text="${username}">Profile</h1>
+        <h1 th:text="${username}"></h1>
         <p class="subtitle">შენი სტატისტიკა</p>
 
         <section class="game-stats">
