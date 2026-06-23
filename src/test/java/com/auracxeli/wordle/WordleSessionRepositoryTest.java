@@ -1,0 +1,105 @@
+package com.auracxeli.wordle;
+
+import com.auracxeli.user.User;
+import com.auracxeli.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * I use a real mySQL containers via testcontainers to test the methods WORdleGUess,WordleSession,
+ * WordleOutcome and WordleSessionRepository
+ */
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
+class WordleSessionRepositoryTest {
+
+    @Container
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
+
+    @DynamicPropertySource
+    static void mysqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mysql::getJdbcUrl);
+        registry.add("spring.datasource.username", mysql::getUsername);
+        registry.add("spring.datasource.password", mysql::getPassword);
+    }
+    @Autowired
+    private WordleSessionRepository wordleSessionRepository;
+    @Autowired
+    private UserRepository userRepository;
+    private User testUser;
+    @BeforeEach
+    void setUp() {
+        testUser = userRepository.save(
+                new User("testuser", "testuser@example.com", "dummy-hashed-password")
+        );
+    }
+    @Test
+    void save_thenFindByUserIdAndPuzzleDate_returnsSession() {
+        LocalDate puzzleDate = LocalDate.now();
+        WordleSession session = new WordleSession(testUser, puzzleDate);
+        wordleSessionRepository.save(session);
+
+        Optional<WordleSession> found =
+                wordleSessionRepository.findByUserIdAndPuzzleDate(testUser.getId(), puzzleDate);
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getPuzzleDate()).isEqualTo(puzzleDate);
+        assertThat(found.get().getOutcome()).isEqualTo(WordleOutcome.IN_PROGRESS);
+        assertThat(found.get().getUser().getId()).isEqualTo(testUser.getId());
+    }
+    @Test
+    void findByUserIdAndPuzzleDate_returnsEmpty_whenNoSessionExists() {
+        Optional<WordleSession> found =
+                wordleSessionRepository.findByUserIdAndPuzzleDate(testUser.getId(), LocalDate.now());
+
+        assertThat(found).isEmpty();
+    }
+    @Test
+    void save_persistsGuessesViaCascade() {
+        WordleSession session = new WordleSession(testUser, LocalDate.now());
+        session.getGuesses().add(new WordleGuess(session, "ვარდი", 1));
+        session.getGuesses().add(new WordleGuess(session, "ბარგი", 2));
+        WordleSession saved = wordleSessionRepository.save(session);
+        Optional<WordleSession> found =
+                wordleSessionRepository.findByUserIdAndPuzzleDate(testUser.getId(), saved.getPuzzleDate());
+        assertThat(found).isPresent();
+        assertThat(found.get().getGuesses()).hasSize(2);
+        assertThat(found.get().getGuesses())
+                .extracting(WordleGuess::getGuessWord)
+                .containsExactlyInAnyOrder("ვარდი", "ბარგი");
+        // I test the getters here
+        WordleGuess firstGuess = found.get().getGuesses().get(0);
+        assertThat(firstGuess.getId()).isNotNull();
+        assertThat(firstGuess.getSession().getId()).isEqualTo(saved.getId());
+        assertThat(firstGuess.getGuessNumber()).isIn((short) 1, (short) 2);
+        assertThat(firstGuess.getCreatedAt()).isNotNull();
+    }
+    @Test
+    void setOutcome_updatesOutcomeAfterSave() {
+        WordleSession session = new WordleSession(testUser, LocalDate.now());
+        WordleSession saved = wordleSessionRepository.save(session);
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getCreatedAt()).isNotNull();
+        saved.setOutcome(WordleOutcome.WON);
+        wordleSessionRepository.save(saved);
+        Optional<WordleSession> reloaded =
+                wordleSessionRepository.findByUserIdAndPuzzleDate(testUser.getId(), saved.getPuzzleDate());
+        assertThat(reloaded).isPresent();
+        assertThat(reloaded.get().getOutcome()).isEqualTo(WordleOutcome.WON);
+    }
+
+}
