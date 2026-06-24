@@ -23,15 +23,18 @@ public class WordleController {
     private final WordleSessionService wordleSessionService;
     private final WordleDailyService wordleDailyService;
     private final WordleGuessEvaluator wordleGuessEvaluator;
+    private final WordleGuessValidator wordleGuessValidator;
     private final UserRepository userRepository;
 
     public WordleController(WordleSessionService wordleSessionService,
                              WordleDailyService wordleDailyService,
                              WordleGuessEvaluator wordleGuessEvaluator,
+                             WordleGuessValidator wordleGuessValidator,
                              UserRepository userRepository) {
         this.wordleSessionService = wordleSessionService;
         this.wordleDailyService = wordleDailyService;
         this.wordleGuessEvaluator = wordleGuessEvaluator;
+        this.wordleGuessValidator = wordleGuessValidator;
         this.userRepository = userRepository;
     }
 
@@ -62,8 +65,13 @@ public class WordleController {
         User user = currentUser(authentication);
         WordleSession session = wordleSessionService.getOrCreateTodaysSession(user);
         try {
+            if (!wordleGuessValidator.isValid(guess)) {
+                throw new InvalidGeorgianWordException();
+            }
             wordleSessionService.submitGuess(session, todaysWord.get(), guess);
-        } catch (WordleSessionService.InvalidGuessException | WordleSessionService.AlreadyCompletedException e) {
+        } catch (InvalidGeorgianWordException
+                 | WordleSessionService.InvalidGuessException
+                 | WordleSessionService.AlreadyCompletedException e) {
             populateBoardModel(model, session, todaysWord.get());
             model.addAttribute("error", e.getMessage());
             return "wordle";
