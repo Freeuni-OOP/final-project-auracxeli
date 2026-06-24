@@ -27,14 +27,14 @@
                 წააგე. სიტყვა იყო: <span th:text="${revealedWord}"></span>
             </p>
 
-            <div class="wordle-board">
+            <div class="wordle-board" id="wordle-board">
                 <div class="wordle-row" th:each="row : ${rows}">
                     <span class="t" th:each="tile : ${row}" th:class="${tile.cssClass}" th:text="${tile.letter}"></span>
                 </div>
             </div>
             <div th:if="${readOnly}" class="wordle-result">
                 <p class="wordle-attempts">
-                    ცდები: <span th:text="${attemptsUsed}"></span>/<span th:text="${maxAttempts}"></span>
+                    ცდები: <span id="attempts-used" th:text="${attemptsUsed}"></span>/<span id="max-attempts" th:text="${maxAttempts}"></span>
                 </p>
                 <button type="button" id="share-button" class="wordle-share-btn">გაზიარება</button>
                 <p id="share-feedback" class="wordle-share-feedback" aria-live="polite"></p>
@@ -48,7 +48,9 @@
     </section>
 </main>
 <script th:inline="none">
-    document.getElementById('share-button')?.addEventListener('click', function () {
+    document.getElementById('share-button')?.addEventListener('click', getWordleEmoji);
+
+    function getWordleEmoji() {
         const rows = document.querySelectorAll('#wordle-board .wordle-row');
         const lines = [];
 
@@ -75,7 +77,11 @@
             }
         });
 
-        const grid = lines.join('\n');
+        const attemptsUsed = document.getElementById('attempts-used').textContent;
+        const maxAttempts = document.getElementById('max-attempts').textContent;
+        const header = 'ცდები ' + attemptsUsed + '/' + maxAttempts;
+
+        const grid = header + '\n\n' + lines.join('\n');
         const feedback = document.getElementById('share-feedback');
 
         navigator.clipboard.writeText(grid)
@@ -85,7 +91,7 @@
             .catch(function () {
                 feedback.textContent = 'კოპირება ვერ მოხერხდა';
             });
-    });
+    }
 </script>
 </body>
 </html>
