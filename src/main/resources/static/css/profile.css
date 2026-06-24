@@ -1,0 +1,73 @@
+.brand {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.logout-form button {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.logout-form button:hover {
+    filter: brightness(0.97);
+}
+
+.profile {
+    padding: 48px 0 56px;
+    text-align: center;
+}
+.profile h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 800;
+}
+.profile .subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 16px;
+}
+
+.stats-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap);
+}
+@media (max-width: 640px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.stat-value {
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--accent);
+}
+.stat-label {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.game-title {
+    font-size: 20px;
+    font-weight: 800;
+}
