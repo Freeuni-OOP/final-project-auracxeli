@@ -19,7 +19,7 @@ public class WordleWord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 10)
+    @Column(nullable = false, length = 10)
     private String word;
 
     @Column(name = "scheduled_date", unique = true)
