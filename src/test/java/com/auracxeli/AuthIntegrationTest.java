@@ -97,7 +97,7 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", logoutUser)
                         .param("email", "logout_" + System.currentTimeMillis() + "@test.com")
-                        .param("password", Password))
+                        .param("password", PASSWORD))
                 .andExpect(status().is3xxRedirection());
 
         // Login
