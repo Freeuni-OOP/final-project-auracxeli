@@ -18,35 +18,35 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
     private MockMvc mockMvc;
 
     private static final String REGISTER_URL = "/register";
-    private static final String Login_URL = "/login";
-    private static final String LogOut_URL = "/logout";
-    private static final String Profile_URL = "/profile";
+    private static final String LOGIN_URL = "/login";
+    private static final String LOGOUT_URL = "/logout";
+    private static final String PROFILE_URL = "/profile";
 
-    private static final String Username = "USerTest_" + System.currentTimeMillis();
-    private static final String Email = "UserEmailTest_" + System.currentTimeMillis() + "@test.com";
-    private static final String Password = "Passw0rd>";
+    private static final String USERNAME = "USerTest_" + System.currentTimeMillis();
+    private static final String EMAIL = "UserEmailTest_" + System.currentTimeMillis() + "@test.com";
+    private static final String PASSWORD = "Passw0rd>";
 
     @Test
-    public void regLogAccProfile() throws Exception {
+    public void successfulRegistrationLoginAndProfileAccess() throws Exception {
         // Step 1 - register
         mockMvc.perform(post(REGISTER_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", Username)
-                        .param("email", Email)
-                        .param("password", Password))
+                        .param("username", USERNAME)
+                        .param("email", EMAIL)
+                        .param("password", PASSWORD))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
         // Step 2 - login
-        final var loginResult = mockMvc.perform(post(Login_URL).with(csrf())
+        final var loginResult = mockMvc.perform(post(LOGIN_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", Username)
-                        .param("password", Password))
+                        .param("username", USERNAME)
+                        .param("password", PASSWORD))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
                 .andReturn();
         // Step 3 - access profile
         final var session = (MockHttpSession) loginResult.getRequest().getSession(false);
-        mockMvc.perform(get(Profile_URL).session(session))
+        mockMvc.perform(get(PROFILE_URL).session(session))
                 .andExpect(status().isOk());
     }
     @Test
@@ -56,9 +56,9 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("username", existingUser)
                 .param("email", "exists_" + System.currentTimeMillis() + "@test.com")
-                .param("password", Password));
+                .param("password", PASSWORD));
 
-        mockMvc.perform(post(Login_URL).with(csrf())
+        mockMvc.perform(post(LOGIN_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", existingUser)
                         .param("password", "WrongPassword!"))
@@ -68,22 +68,22 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void registerWithDuplicateUsername_returnsValidationError() throws Exception {
-        final String duplicate = "dup_" + System.currentTimeMillis();
-
+        final String duplicateUser = "dup_" + System.currentTimeMillis();
+        final String duplicatePass = "PassCode2";
         // First registration - should succeed with redirect
         mockMvc.perform(post(REGISTER_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", duplicate)
+                        .param("username", duplicateUser)
                         .param("email", "duplicate1_" + System.currentTimeMillis() + "@test.com")
-                        .param("password", Password))
+                        .param("password", duplicatePass))
                 .andExpect(status().is3xxRedirection());
 
         // Second registration - should fail with 200 (form shown again with error)
         mockMvc.perform(post(REGISTER_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", duplicate)
+                        .param("username", duplicateUser)
                         .param("email", "duplicate2_" + System.currentTimeMillis() + "@test.com")
-                        .param("password", Password))
+                        .param("password", duplicatePass))
                 .andExpect(status().isOk());
     }
 
@@ -101,7 +101,7 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().is3xxRedirection());
 
         // Login
-        final var loginResult = mockMvc.perform(post(Login_URL).with(csrf())
+        final var loginResult = mockMvc.perform(post(LOGIN_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", logoutUser)
                         .param("password", Password))
@@ -111,17 +111,17 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
         final var session = (MockHttpSession) loginResult.getRequest().getSession(false);
 
         // Profile works before logout
-        mockMvc.perform(get(Profile_URL).session(session))
+        mockMvc.perform(get(PROFILE_URL).session(session))
                 .andExpect(status().isOk());
 
         // Logout
-        mockMvc.perform(post(LogOut_URL).with(csrf()).session(session))
+        mockMvc.perform(post(LOGOUT_URL).with(csrf()).session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
 
         // After logout, profile redirects to login
         MockHttpSession newSession = new MockHttpSession();
-        mockMvc.perform(get(Profile_URL).session(newSession))
+        mockMvc.perform(get(PROFILE_URL).session(newSession))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/login**"));
     }
