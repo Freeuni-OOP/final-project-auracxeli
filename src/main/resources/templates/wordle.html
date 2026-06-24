@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Wordle</title>
+    <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet"/>
+    <link th:href="@{/css/wordle.css}" href="/static/css/wordle.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <h1 th:href="@{/}">Wordle</h1>
+    </div>
+</header>
+<main>
+    <section class="container">
+        <div th:if="${noPuzzle}">
+            <p>დღეს სიტყვა არ არის დაგეგმილი.</p>
+        </div>
+
+        <div th:unless="${noPuzzle}">
+            <p th:if="${error}" class="wordle-error" th:text="${error}"></p>
+
+            <p th:if="${outcome != null and outcome.name() == 'WON'}" class="wordle-message win">გილოცავ! გამოიცანი სიტყვა!</p>
+            <p th:if="${outcome != null and outcome.name() == 'LOST'}" class="wordle-message lose">
+                წააგე. სიტყვა იყო: <span th:text="${revealedWord}"></span>
+            </p>
+
+            <div class="wordle-board">
+                <div class="wordle-row" th:each="row : ${rows}">
+                    <span class="t" th:each="tile : ${row}" th:class="${tile.cssClass}" th:text="${tile.letter}"></span>
+                </div>
+            </div>
+
+            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="text" name="guess" required="required" minlength="5" maxlength="5" autocomplete="off" autofocus="autofocus"/>
+                <button type="submit">გამოცნობა</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,65 @@
+.wordle-board {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    margin: 32px 0;
+}
+.wordle-row {
+    display: flex;
+    gap: 6px;
+}
+.wordle-row .t {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--line);
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--ink);
+}
+.wordle-row .t.g {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+}
+.wordle-row .t.y {
+    background: var(--yellow);
+    border-color: var(--yellow);
+    color: #fff;
+}
+.wordle-row .t.x {
+    background: #9ca3af;
+    border-color: #9ca3af;
+    color: #fff;
+}
+
+.wordle-form {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.wordle-form input[type="text"] {
+    font-size: 18px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.wordle-message {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.wordle-message.win { color: var(--green); }
+.wordle-message.lose { color: #b91c1c; }
+.wordle-error {
+    text-align: center;
+    color: #b91c1c;
+    margin-bottom: 12px;
+}
