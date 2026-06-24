@@ -104,7 +104,7 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
         final var loginResult = mockMvc.perform(post(LOGIN_URL).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", logoutUser)
-                        .param("password", Password))
+                        .param("password", PASSWORD))
                 .andExpect(status().is3xxRedirection())
                 .andReturn();
 
