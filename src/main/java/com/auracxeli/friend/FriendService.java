@@ -28,9 +28,12 @@ public class FriendService {
         if (addressee.getId().equals(requesterId)) {
             throw new FriendshipException("საკუთარი თავის დამეგობრება შეუძლებელია");
         }
-        if (friendshipRepository.findBetween(requesterId, addressee.getId()).isPresent()) {
+        friendshipRepository.findBetween(requesterId, addressee.getId()).ifPresent(existing -> {
+            if (existing.getStatus() == FriendshipStatus.ACCEPTED) {
+                throw new FriendshipException("თქვენ უკვე მეგობრები ხართ");
+            }
             throw new FriendshipException("მეგობრობის მოთხოვნა უკვე არსებობს");
-        }
+        });
 
         User requester = userRepository.getReferenceById(requesterId);
         friendshipRepository.save(new Friendship(requester, addressee));
