@@ -1,6 +1,7 @@
 package com.auracxeli.wordle;
 
 import com.auracxeli.user.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.Locale;
  * the orchestration {@link WordleController} needs but that doesn't belong
  * in any single existing repository/service.
  */
+@Slf4j
 @Service
 public class WordleSessionService {
 
@@ -43,7 +45,9 @@ public class WordleSessionService {
         return wordleSessionRepository.findByUserIdAndPuzzleDate(user.getId(), today)
                 .orElseGet(() -> {
                     wordleDailyService.getTodaysWord().orElseThrow(NoDailyWordException::new);
-                    return wordleSessionRepository.save(new WordleSession(user, today));
+                    WordleSession created = wordleSessionRepository.save(new WordleSession(user, today));
+                    log.info("Started Wordle game for user {} on {}", user.getId(), today);
+                    return created;
                 });
     }
 
@@ -68,6 +72,7 @@ public class WordleSessionService {
         List<LetterFeedback> feedback = wordleGuessEvaluator.evaluateGuess(guess, todaysWord.getWord());
 
         int guessNumber = session.getGuesses().size() + 1;
+        log.debug("Evaluated guess #{} for session {}: feedback={}", guessNumber, session.getId(), feedback);
         session.getGuesses().add(new WordleGuess(session, guess, guessNumber));
 
         boolean won = feedback
@@ -81,6 +86,10 @@ public class WordleSessionService {
         }
 
         wordleSessionRepository.save(session);
+        if (session.getOutcome() != WordleOutcome.IN_PROGRESS) {
+            log.info("User {} finished game {} outcome={} attempts={}",
+                    session.getUser().getId(), session.getId(), session.getOutcome(), guessNumber);
+        }
         return new GuessResult(feedback, session.getOutcome());
     }
 

@@ -2,6 +2,7 @@ package com.auracxeli.admin;
 
 import com.auracxeli.wordle.WordleWord;
 import com.auracxeli.wordle.WordleWordRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AdminWordService {
 
@@ -50,11 +52,15 @@ public class AdminWordService {
                 target.minusDays(UNIQUENESS_WINDOW_DAYS),
                 target.plusDays(UNIQUENESS_WINDOW_DAYS));
         if (usedRecently) {
+            log.warn("Rejected word add by admin {} for {}: violates {}-day uniqueness rule",
+                    addedBy, target, UNIQUENESS_WINDOW_DAYS);
             throw new DuplicateWordException("word",
                     "ეს სიტყვა გამოყენებულია ბოლო " + UNIQUENESS_WINDOW_DAYS + " დღეში");
         }
 
-        return wordleWordRepository.save(new WordleWord(word, target, addedBy));
+        WordleWord saved = wordleWordRepository.save(new WordleWord(word, target, addedBy));
+        log.info("Admin {} scheduled word for {}", addedBy, saved.getScheduledDate());
+        return saved;
     }
 
     /** The earliest day from today onward that has no word scheduled. */
