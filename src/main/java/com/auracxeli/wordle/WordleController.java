@@ -70,7 +70,8 @@ public class WordleController {
         WordleSession session = wordleSessionService.getOrCreateTodaysSession(user);
         try {
             wordleSessionService.submitGuess(session, todaysWord.get(), guess);
-        } catch (WordleSessionService.InvalidGuessException | WordleSessionService.AlreadyCompletedException e) {
+        } catch (WordleSessionService.InvalidGuessException | WordleSessionService.AlreadyCompletedException
+                 | InvalidGeorgianWordException e) {
             log.warn("Rejected guess for user {} session {}: {}", user.getId(), session.getId(), e.getMessage());
             populateBoardModel(model, session, todaysWord.get());
             model.addAttribute("error", e.getMessage());

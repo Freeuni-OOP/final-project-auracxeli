@@ -22,6 +22,8 @@ class WordleSessionServiceTest {
     private WordleSessionRepository wordleSessionRepository;
     @Mock
     private WordleDailyService wordleDailyService;
+    @Mock
+    private WordleGuessValidator wordleGuessValidator;
     private WordleSessionService wordleSessionService;
 
     private final WordleGuessEvaluator evaluator = new WordleGuessEvaluator();
@@ -30,7 +32,9 @@ class WordleSessionServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        wordleSessionService = new WordleSessionService(wordleSessionRepository, wordleDailyService, evaluator);
+        wordleSessionService = new WordleSessionService(wordleSessionRepository, wordleDailyService, evaluator,
+                wordleGuessValidator);
+        lenient().when(wordleGuessValidator.isValid(any())).thenReturn(true);
         user = userWithId(1L);
         todaysWord = new WordleWord("ვარდი", LocalDate.now(), null);
     }
@@ -123,6 +127,17 @@ class WordleSessionServiceTest {
 
         assertThrows(WordleSessionService.InvalidGuessException.class,
                 () -> wordleSessionService.submitGuess(session, todaysWord, "ბარ"));
+        assertEquals(0, session.getGuesses().size());
+        verify(wordleSessionRepository, never()).save(any());
+    }
+
+    @Test
+    void submitGuess_rejectsNonDictionaryWord_withoutPersisting() {
+        WordleSession session = new WordleSession(user, LocalDate.now());
+        when(wordleGuessValidator.isValid("ააააა")).thenReturn(false);
+
+        assertThrows(InvalidGeorgianWordException.class,
+                () -> wordleSessionService.submitGuess(session, todaysWord, "ააააა"));
         assertEquals(0, session.getGuesses().size());
         verify(wordleSessionRepository, never()).save(any());
     }
