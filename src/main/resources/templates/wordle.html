@@ -48,5 +48,52 @@
         </div>
     </section>
 </main>
+<script th:src="@{/js/app.js}" src="/static/js/app.js"></script>
+<script th:inline="none">
+    document.getElementById('share-button')?.addEventListener('click', getWordleEmoji);
+
+    function getWordleEmoji() {
+        const rows = document.querySelectorAll('#wordle-board .wordle-row');
+        const lines = [];
+
+        rows.forEach(function (row) {
+            const tiles = row.querySelectorAll('.t');
+            let line = '';
+            let hasLetter = false;
+
+            tiles.forEach(function (tile) {
+                if (tile.classList.contains('g')) {
+                    line += '🟩';
+                    hasLetter = true;
+                } else if (tile.classList.contains('y')) {
+                    line += '🟨';
+                    hasLetter = true;
+                } else if (tile.classList.contains('x')) {
+                    line += '⬜';
+                    hasLetter = true;
+                }
+            });
+
+            if (hasLetter) {
+                lines.push(line);
+            }
+        });
+
+        const attemptsUsed = document.getElementById('attempts-used').textContent;
+        const maxAttempts = document.getElementById('max-attempts').textContent;
+        const header = 'ცდები ' + attemptsUsed + '/' + maxAttempts;
+
+        const grid = header + '\n\n' + lines.join('\n');
+        const feedback = document.getElementById('share-feedback');
+
+        navigator.clipboard.writeText(grid)
+            .then(function () {
+                feedback.textContent = 'დაკოპირდა!';
+            })
+            .catch(function () {
+                feedback.textContent = 'კოპირება ვერ მოხერხდა';
+            });
+    }
+</script>
 </body>
 </html>
