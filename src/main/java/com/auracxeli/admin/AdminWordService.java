@@ -1,5 +1,7 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.wordle.InvalidGeorgianWordException;
+import com.auracxeli.wordle.WordleGuessValidator;
 import com.auracxeli.wordle.WordleWord;
 import com.auracxeli.wordle.WordleWordRepository;
 import org.springframework.stereotype.Service;
@@ -19,9 +21,12 @@ public class AdminWordService {
     private static final int UPCOMING_DAYS = 10;
 
     private final WordleWordRepository wordleWordRepository;
+    private final WordleGuessValidator wordleGuessValidator;
 
-    public AdminWordService(WordleWordRepository wordleWordRepository) {
+    public AdminWordService(WordleWordRepository wordleWordRepository,
+                            WordleGuessValidator wordleGuessValidator) {
         this.wordleWordRepository = wordleWordRepository;
+        this.wordleGuessValidator = wordleGuessValidator;
     }
 
     /** Words scheduled for the next {@value #UPCOMING_DAYS} days, earliest first. */
@@ -33,14 +38,21 @@ public class AdminWordService {
 
     /**
      * Adds {@code word}, scheduling it for {@code requestedDate} if that day is given and free,
-     * otherwise for the first upcoming day with no word. Adds nothing (throws) if the same word
-     * is already scheduled within {@value #UNIQUENESS_WINDOW_DAYS} days of the resolved day.
+     * otherwise for the first upcoming day with no word. Adds nothing (throws) if the word is
+     * not a valid Wordle guess, or if the same word is already scheduled within
+     * {@value #UNIQUENESS_WINDOW_DAYS} days of the resolved day.
      *
      * @return the saved word (carrying its resolved date)
-     * @throws DuplicateWordException if the 60-day uniqueness rule would be violated
+     * @throws InvalidGeorgianWordException if the word is not in the guess dictionary
+     * @throws DuplicateWordException       if the 60-day uniqueness rule would be violated
      */
     @Transactional
     public WordleWord addWord(String word, LocalDate requestedDate, Long addedBy) {
+        // An answer must itself be a valid guess, otherwise players could never type it to win.
+        if (!wordleGuessValidator.isValid(word)) {
+            throw new InvalidGeorgianWordException();
+        }
+
         LocalDate target = (requestedDate != null && !wordleWordRepository.existsByScheduledDate(requestedDate))
                 ? requestedDate
                 : firstFreeDay();
