@@ -169,4 +169,76 @@ class FriendServiceTest {
         assertThat(pending).hasSize(1);
         assertThat(pending.get(0).requesterUsername()).isEqualTo("luka");
     }
+
+    @Test
+    void sendRequestWhenAlreadyFriendsThrowsTest() {
+        User addressee = user(2L, "nika");
+        Friendship accepted = mock(Friendship.class);
+        when(accepted.getStatus()).thenReturn(FriendshipStatus.ACCEPTED);
+        when(userRepository.findByUsername("nika")).thenReturn(Optional.of(addressee));
+        when(friendshipRepository.findBetween(1L, 2L)).thenReturn(Optional.of(accepted));
+
+        assertThatThrownBy(() -> friendService.sendRequest(1L, "nika"))
+                .isInstanceOf(FriendshipException.class)
+                .hasMessage("თქვენ უკვე მეგობრები ხართ");
+        verify(friendshipRepository, never()).save(any());
+    }
+
+    @Test
+    void acceptRequestWhenNotFoundThrowsTest() {
+        when(friendshipRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> friendService.acceptRequest(1L, 10L))
+                .isInstanceOf(FriendshipException.class);
+        verify(friendshipRepository, never()).save(any());
+    }
+
+    @Test
+    void acceptRequestWhenNotPendingThrowsTest() {
+        User zuka = user(1L, "zuka");
+        User nika = user(2L, "nika");
+        Friendship friendship = new Friendship(nika, zuka);
+        friendship.setStatus(FriendshipStatus.ACCEPTED);
+        when(friendshipRepository.findById(10L)).thenReturn(Optional.of(friendship));
+
+        assertThatThrownBy(() -> friendService.acceptRequest(1L, 10L))
+                .isInstanceOf(FriendshipException.class);
+        verify(friendshipRepository, never()).save(any());
+    }
+
+    @Test
+    void removeFriendWhenNotFoundThrowsTest() {
+        when(friendshipRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> friendService.removeFriend(1L, 10L))
+                .isInstanceOf(FriendshipException.class);
+        verify(friendshipRepository, never()).delete(any());
+    }
+
+    @Test
+    void removeFriendByAddresseeDeletesItTest() {
+        User zuka = user(1L, "zuka");
+        User nika = user(2L, "nika");
+        Friendship friendship = new Friendship(nika, zuka);
+        friendship.setStatus(FriendshipStatus.ACCEPTED);
+        when(friendshipRepository.findById(10L)).thenReturn(Optional.of(friendship));
+
+        friendService.removeFriend(1L, 10L);
+
+        verify(friendshipRepository).delete(friendship);
+    }
+
+    @Test
+    void listFriendsReturnsAddresseeWhenUserIsRequesterTest() {
+        User zuka = user(1L, "zuka");
+        User nika = user(2L, "nika");
+        Friendship friendship = new Friendship(zuka, nika);
+        friendship.setStatus(FriendshipStatus.ACCEPTED);
+        when(friendshipRepository.findByStatusForUser(1L, FriendshipStatus.ACCEPTED)).thenReturn(List.of(friendship));
+
+        List<FriendDto> friends = friendService.listFriends(1L);
+
+        assertThat(friends).hasSize(1);
+        assertThat(friends.get(0).username()).isEqualTo("nika");
+    }
 }
