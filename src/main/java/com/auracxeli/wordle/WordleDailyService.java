@@ -1,11 +1,13 @@
 package com.auracxeli.wordle;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class WordleDailyService {
 
@@ -21,6 +23,8 @@ public class WordleDailyService {
      */
     public Optional<WordleWord> getTodaysWord() {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        return wordleWordRepository.findByScheduledDate(today);
+        Optional<WordleWord> result = wordleWordRepository.findByScheduledDate(today);
+        log.debug("Looked up daily word for {}: present={}", today, result.isPresent());
+        return result;
     }
 }
