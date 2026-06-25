@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * I use a real mySQL containers via testcontainers to test the methods WORdleGUess,WordleSession,
@@ -117,6 +119,17 @@ class WordleSessionRepositoryTest {
                         LocalDate.of(2026, 1, 1),
                         LocalDate.of(2026, 1, 2),
                         LocalDate.of(2026, 1, 3));
+    }
+
+    @Test
+    void saveAndFlush_rejectsGuessNumberAboveSix() {
+        // Wordle allows only 6 guesses, so a 7th row must be rejected at the DB level (issue #34).
+        WordleSession session = new WordleSession(testUser, LocalDate.now());
+        session.getGuesses().add(new WordleGuess(session, "ვარდი", 7));
+
+        assertThatThrownBy(() -> wordleSessionRepository.saveAndFlush(session))
+                .isInstanceOf(DataAccessException.class)
+                .hasMessageContaining("chk_guess_number");
     }
 
 }
