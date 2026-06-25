@@ -1,0 +1,50 @@
+package com.auracxeli.user;
+
+import com.auracxeli.user.dto.ProfileView;
+import com.auracxeli.user.dto.WordleStatsDto;
+import org.springframework.stereotype.Service;
+
+import java.util.Locale;
+
+/**
+ * Assembles a {@link ProfileView} for a user from the pieces that live in
+ * other services (identity from {@link UserService}, stats from
+ * {@link UserStatsService}). Controllers stay thin by delegating here.
+ */
+@Service
+public class ProfileService {
+
+    private final UserService userService;
+    private final UserStatsService userStatsService;
+
+    public ProfileService(UserService userService, UserStatsService userStatsService) {
+        this.userService = userService;
+        this.userStatsService = userStatsService;
+    }
+
+    /**
+     * Builds the profile view for {@code username}.
+     *
+     * @throws UserNotFoundException if no user has that username
+     */
+    public ProfileView getProfile(String username) {
+        User user = userService.getByUsername(username);
+        WordleStatsDto wordleStats = userStatsService.getWordleStats(user.getId());
+        return new ProfileView(
+                user.getUsername(),
+                user.getCreatedAt().toLocalDate(),
+                initialsOf(user.getUsername()),
+                wordleStats
+        );
+    }
+
+    /** First one or two characters of the username, used as an avatar badge. */
+    private String initialsOf(String username) {
+        String trimmed = username == null ? "" : username.trim();
+        if (trimmed.isEmpty()) {
+            return "?";
+        }
+        int count = Math.min(2, trimmed.length());
+        return trimmed.substring(0, count).toUpperCase(Locale.ROOT);
+    }
+}
