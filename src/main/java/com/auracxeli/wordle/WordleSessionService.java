@@ -63,7 +63,8 @@ public class WordleSessionService {
      * @throws InvalidGeorgianWordException if the guess isn't in the dictionary
      * @throws AlreadyCompletedException     if the session already has an outcome
      */
-    @Transactional
+    @Transactional(noRollbackFor = {InvalidGuessException.class, InvalidGeorgianWordException.class,
+            AlreadyCompletedException.class})
     public GuessResult submitGuess(WordleSession session, WordleWord todaysWord, String rawGuess) {
         if (session.getOutcome() != WordleOutcome.IN_PROGRESS) {
             throw new AlreadyCompletedException();
