@@ -4,12 +4,14 @@ import com.auracxeli.user.dto.WordleStatsDto;
 import com.auracxeli.wordle.WordleOutcome;
 import com.auracxeli.wordle.WordleSession;
 import com.auracxeli.wordle.WordleSessionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserStatsService {
 
@@ -35,6 +37,9 @@ public class UserStatsService {
                 .filter(session -> session.getOutcome() == WordleOutcome.WON)
                 .count();
         int winPercent = gamesPlayed == 0 ? 0 : Math.round((float) wins * 100 / gamesPlayed);
+
+        log.debug("Computed Wordle stats for user {}: played={} wins={} win%={}",
+                userId, gamesPlayed, wins, winPercent);
 
         return new WordleStatsDto(
                 gamesPlayed,
