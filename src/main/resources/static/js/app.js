@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
        const geoUniCodes = /^[\u10D0-\u10FF]+$/;
        const input = document.querySelector(".wordle-form input[type='text']");
        const takeFromForm = document.querySelector(".wordle-form");
-       const error = document.querySelector(".wordle-error");
+       const error = document.getElementBy("js-error");
        if(!input || !takeFromForm)return;
 
        input.addEventListener("input", () => {
@@ -17,24 +17,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const value = input.value.trim();
         if(!geoUniCodes.test(value)){
             event.preventDefault();
-            if(error){
+            
             error.textContent = "დაშვებულია მხოლოდ ქართული ასოები";
             error.style.display = "block";
-
-            }else{
-                const newErr = document.createElement("p");
-                newErr.classList.add("wordle-error");
-                newErr.textContent = "დაშვებულია მხოლოდ ქართული ასოები";
-                form.insertAdjacentElement("beforebegin", newErr);
-
-            }return;
+            return;
 
 
 
         }
-         if(error){
-              error.textContent = "";
-         }
-
+         
+             error.textContent = "";
+            error.style.display = "none";
        });
 });
