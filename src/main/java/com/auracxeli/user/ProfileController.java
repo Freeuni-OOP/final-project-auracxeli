@@ -1,25 +1,29 @@
 package com.auracxeli.user;
 
-import com.auracxeli.user.dto.WordleStatsDto;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ProfileController {
 
-    private final UserStatsService userStatsService;
+    private final ProfileService profileService;
 
-    public ProfileController(UserStatsService userStatsService) {
-        this.userStatsService = userStatsService;
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
     }
 
     @GetMapping("/profile")
-    public String showProfile(@AuthenticationPrincipal UserDetailsImpl currentUser, Model model) {
-        WordleStatsDto wordleStats = userStatsService.getWordleStats(currentUser.getId());
-        model.addAttribute("username", currentUser.getUsername());
-        model.addAttribute("wordleStats", wordleStats);
+    public String showOwnProfile(@AuthenticationPrincipal UserDetailsImpl currentUser, Model model) {
+        model.addAttribute("profile", profileService.getProfile(currentUser.getUsername()));
+        return "profile";
+    }
+
+    @GetMapping("/profile/{username}")
+    public String showUserProfile(@PathVariable String username, Model model) {
+        model.addAttribute("profile", profileService.getProfile(username));
         return "profile";
     }
 }
