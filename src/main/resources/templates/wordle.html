@@ -27,13 +27,20 @@
                 წააგე. სიტყვა იყო: <span th:text="${revealedWord}"></span>
             </p>
 
-            <div class="wordle-board">
+            <div class="wordle-board" id="wordle-board">
                 <div class="wordle-row" th:each="row : ${rows}">
                     <span class="t" th:each="tile : ${row}" th:class="${tile.cssClass}" th:text="${tile.letter}"></span>
                 </div>
             </div>
-
-            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post">
+            <div th:if="${readOnly}" class="wordle-result">
+                <p class="wordle-attempts">
+                    ცდები: <span id="attempts-used" th:text="${attemptsUsed}"></span>/<span id="max-attempts" th:text="${maxAttempts}"></span>
+                </p>
+                <button type="button" id="share-button" class="wordle-share-btn">გაზიარება</button>
+                <p id="share-feedback" class="wordle-share-feedback" aria-live="polite"></p>
+            </div>
+            <p id="js-error" class="wordle-error" style="display:none;"></p>
+            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post" novalidate>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="text" name="guess" required="required" minlength="5" maxlength="5" autocomplete="off" autofocus="autofocus"/>
                 <button type="submit">გამოცნობა</button>
