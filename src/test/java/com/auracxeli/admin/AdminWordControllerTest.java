@@ -4,6 +4,7 @@ import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.user.Role;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
+import com.auracxeli.wordle.InvalidGeorgianWordException;
 import com.auracxeli.wordle.WordleWord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,21 @@ class AdminWordControllerTest {
                         .with(authentication(adminAuth()))
                         .with(csrf())
                         .param("word", "ბურთი"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/words"))
+                .andExpect(model().attributeHasFieldErrors("addWordRequest", "word"));
+    }
+
+    @Test
+    void postWord_wordNotInDictionary_showsErrorOnWordField() throws Exception {
+        when(adminWordService.upcomingWords()).thenReturn(List.of());
+        doThrow(new InvalidGeorgianWordException())
+                .when(adminWordService).addWord(eq("ააააა"), any(), any());
+
+        mockMvc.perform(post("/admin/words")
+                        .with(authentication(adminAuth()))
+                        .with(csrf())
+                        .param("word", "ააააა"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/words"))
                 .andExpect(model().attributeHasFieldErrors("addWordRequest", "word"));
