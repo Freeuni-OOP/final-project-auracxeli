@@ -1,5 +1,6 @@
 package com.auracxeli.wordle;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
  * Pure, stateless Wordle scoring: compares a 5-letter guess against the target
  * word and returns green/yellow/gray feedback for each position.
  */
+@Slf4j
 @Service
 public class WordleGuessEvaluator {
 
@@ -69,6 +71,9 @@ public class WordleGuessEvaluator {
             }
         }
 
-        return List.of(result);
+        List<LetterFeedback> feedback = List.of(result);
+        // Log the guess and its feedback (not the target) to avoid leaking the answer into shared logs.
+        log.debug("Scored guess '{}' (len={}) -> {}", g, WORD_LENGTH, feedback);
+        return feedback;
     }
 }
