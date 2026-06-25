@@ -2,6 +2,7 @@ package com.auracxeli.admin;
 
 import com.auracxeli.admin.dto.AddWordRequest;
 import com.auracxeli.user.UserDetailsImpl;
+import com.auracxeli.wordle.InvalidGeorgianWordException;
 import com.auracxeli.wordle.WordleWord;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,6 +45,8 @@ public class AdminWordController {
                 redirectAttributes.addFlashAttribute("message",
                         "სიტყვა დაემატა " + saved.getScheduledDate() + "-ზე");
                 return "redirect:/admin/words";
+            } catch (InvalidGeorgianWordException e) {
+                bindingResult.rejectValue("word", "invalidWord", e.getMessage());
             } catch (DuplicateWordException e) {
                 bindingResult.rejectValue(e.getField(), "duplicate", e.getMessage());
             }
