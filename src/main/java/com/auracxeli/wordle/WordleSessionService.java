@@ -1,6 +1,7 @@
 package com.auracxeli.wordle;
 
 import com.auracxeli.user.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.Locale;
  * the orchestration {@link WordleController} needs but that doesn't belong
  * in any single existing repository/service.
  */
+@Slf4j
 @Service
 public class WordleSessionService {
 
@@ -22,13 +24,16 @@ public class WordleSessionService {
     private final WordleSessionRepository wordleSessionRepository;
     private final WordleDailyService wordleDailyService;
     private final WordleGuessEvaluator wordleGuessEvaluator;
+    private final WordleGuessValidator wordleGuessValidator;
 
     public WordleSessionService(WordleSessionRepository wordleSessionRepository,
                                 WordleDailyService wordleDailyService,
-                                WordleGuessEvaluator wordleGuessEvaluator) {
+                                WordleGuessEvaluator wordleGuessEvaluator,
+                                WordleGuessValidator wordleGuessValidator) {
         this.wordleSessionRepository = wordleSessionRepository;
         this.wordleDailyService = wordleDailyService;
         this.wordleGuessEvaluator = wordleGuessEvaluator;
+        this.wordleGuessValidator = wordleGuessValidator;
     }
 
     /**
@@ -43,7 +48,9 @@ public class WordleSessionService {
         return wordleSessionRepository.findByUserIdAndPuzzleDate(user.getId(), today)
                 .orElseGet(() -> {
                     wordleDailyService.getTodaysWord().orElseThrow(NoDailyWordException::new);
-                    return wordleSessionRepository.save(new WordleSession(user, today));
+                    WordleSession created = wordleSessionRepository.save(new WordleSession(user, today));
+                    log.info("Started Wordle game for user {} on {}", user.getId(), today);
+                    return created;
                 });
     }
 
@@ -52,10 +59,12 @@ public class WordleSessionService {
      * {@code session}, and updates the session's outcome if this guess wins
      * or exhausts the user's attempts.
      *
-     * @throws InvalidGuessException     if the guess isn't exactly 5 letters
-     * @throws AlreadyCompletedException if the session already has an outcome
+     * @throws InvalidGuessException        if the guess isn't exactly 5 letters
+     * @throws InvalidGeorgianWordException if the guess isn't in the dictionary
+     * @throws AlreadyCompletedException     if the session already has an outcome
      */
-    @Transactional
+    @Transactional(noRollbackFor = {InvalidGuessException.class, InvalidGeorgianWordException.class,
+            AlreadyCompletedException.class})
     public GuessResult submitGuess(WordleSession session, WordleWord todaysWord, String rawGuess) {
         if (session.getOutcome() != WordleOutcome.IN_PROGRESS) {
             throw new AlreadyCompletedException();
@@ -63,11 +72,15 @@ public class WordleSessionService {
         if (rawGuess == null || rawGuess.trim().length() != WordleGuessEvaluator.WORD_LENGTH) {
             throw new InvalidGuessException();
         }
+        if (!wordleGuessValidator.isValid(rawGuess)) {
+            throw new InvalidGeorgianWordException();
+        }
 
         String guess = rawGuess.trim().toLowerCase(Locale.ROOT);
         List<LetterFeedback> feedback = wordleGuessEvaluator.evaluateGuess(guess, todaysWord.getWord());
 
         int guessNumber = session.getGuesses().size() + 1;
+        log.debug("Evaluated guess #{} for session {}: feedback={}", guessNumber, session.getId(), feedback);
         session.getGuesses().add(new WordleGuess(session, guess, guessNumber));
 
         boolean won = feedback
@@ -81,6 +94,10 @@ public class WordleSessionService {
         }
 
         wordleSessionRepository.save(session);
+        if (session.getOutcome() != WordleOutcome.IN_PROGRESS) {
+            log.info("User {} finished game {} outcome={} attempts={}",
+                    session.getUser().getId(), session.getId(), session.getOutcome(), guessNumber);
+        }
         return new GuessResult(feedback, session.getOutcome());
     }
 

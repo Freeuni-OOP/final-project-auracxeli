@@ -63,3 +63,53 @@
     color: #b91c1c;
     margin-bottom: 12px;
 }
+.wordle-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: wordle-result-in 0.4s ease-out forwards;
+}
+
+@keyframes wordle-result-in {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wordle-attempts {
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.wordle-share-btn {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.wordle-share-btn:hover {
+    background: color-mix(in srgb, var(--green) 85%, black);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--green) 35%, transparent);
+}
+
+.wordle-share-btn:active {
+    transform: scale(0.97);
+}
+
+.wordle-share-feedback {
+    font-size: 14px;
+    color: var(--green);
+    font-weight: 600;
+    min-height: 1.2em;
+}

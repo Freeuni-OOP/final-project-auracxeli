@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ადმინ პანელი</title>
+    <link th:href="@{/css/styles.css}"  href="/static/css/styles.css"  rel="stylesheet" />
+    <link th:href="@{/css/landing.css}" href="/static/css/landing.css" rel="stylesheet" />
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <a class="brand" th:href="@{/}">მთავარი</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">გასვლა</button>
+        </form>
+    </div>
+</header>
+<main>
+    <section class="hero container">
+        <h1>ადმინ პანელი</h1>
+        <p>მართე თამაშების შიგთავსი</p>
+    </section>
+
+    <section class="games container">
+        <a class="game-card" th:href="@{/admin/words}">
+            <h2>Wordle</h2>
+            <p>სიტყვების მართვა — დაამატე ან დაგეგმე ქართული სიტყვები.</p>
+        </a>
+        <a class="game-card" th:href="@{/admin/connections}">
+            <h2>Connections</h2>
+            <p>კავშირების მართვა (მალე).</p>
+        </a>
+        <a class="game-card" th:href="@{/admin/users}">
+            <h2>მომხმარებლები</h2>
+            <p>მომხმარებლების მართვა (მალე).</p>
+        </a>
+    </section>
+</main>
+</body>
+</html>

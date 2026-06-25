@@ -78,6 +78,34 @@ class WordleControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void postGuess_invalidGeorgianWord_showsErrorAndDoesNotConsumeAttempt() throws Exception {
+        // "ააააა" is five real Georgian letters but not a dictionary word.
+        mockMvc.perform(post("/wordle/guess")
+                        .with(asPlayerOne)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .param("guess", "ააააა"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        org.hamcrest.Matchers.containsString(InvalidGeorgianWordException.MESSAGE)));
+
+        // Attempt was rejected before evaluation, so the board is still empty (0 used).
+        mockMvc.perform(get("/wordle").with(asPlayerOne))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"guess\"")));
+    }
+
+    @Test
+    void postGuess_validDictionaryWord_isAcceptedAndRedirects() throws Exception {
+        // "ბარგი" is a valid dictionary word but not today's answer.
+        mockMvc.perform(post("/wordle/guess")
+                        .with(asPlayerOne)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .param("guess", "ბარგი"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/wordle"));
+    }
+
+    @Test
     void postGuess_emptyGuess_doesNotErrorAndShowsBoard() throws Exception {
         mockMvc.perform(post("/wordle/guess")
                         .with(asPlayerOne)
