@@ -40,7 +40,7 @@
                 <p id="share-feedback" class="wordle-share-feedback" aria-live="polite"></p>
             </div>
             <p id="js-error" class="wordle-error" style="display:none;"></p>
-            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post">
+            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post" novalidate>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="text" name="guess" required="required" minlength="5" maxlength="5" autocomplete="off" autofocus="autofocus"/>
                 <button type="submit">გამოცნობა</button>
