@@ -88,7 +88,6 @@ public class AuthIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @org.junit.jupiter.api.Disabled("Profile page not yet implemented - waiting for teammate")
     public void afterLogout_protectedPageRedirectsToLogin() throws Exception {
         final String logoutUser = "logout_" + System.currentTimeMillis();
 
