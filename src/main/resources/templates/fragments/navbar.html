@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<nav th:fragment="navbar" class="container navbar">
+    <a class="brand" th:href="@{/}">Auracxeli</a>
+    <span class="nav-links" sec:authorize="isAuthenticated()">
+        <a class="nav-link" th:href="@{/profile}">პროფილი</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">გასვლა</button>
+        </form>
+    </span>
+</nav>
+</body>
+</html>
