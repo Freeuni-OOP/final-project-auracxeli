@@ -3,18 +3,23 @@ package com.auracxeli.wordle;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
 import com.auracxeli.user.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+@Slf4j
 @Controller
 public class WordleController {
 
@@ -39,6 +44,7 @@ public class WordleController {
     public String showBoard(Authentication authentication, Model model) {
         Optional<WordleWord> todaysWord = wordleDailyService.getTodaysWord();
         if (todaysWord.isEmpty()) {
+            log.warn("No daily puzzle scheduled for {}", LocalDate.now(ZoneOffset.UTC));
             model.addAttribute("noPuzzle", true);
             return "wordle";
         }
@@ -55,6 +61,7 @@ public class WordleController {
                                Model model) {
         Optional<WordleWord> todaysWord = wordleDailyService.getTodaysWord();
         if (todaysWord.isEmpty()) {
+            log.warn("No daily puzzle scheduled for {}", LocalDate.now(ZoneOffset.UTC));
             model.addAttribute("noPuzzle", true);
             return "wordle";
         }
@@ -63,13 +70,30 @@ public class WordleController {
         WordleSession session = wordleSessionService.getOrCreateTodaysSession(user);
         try {
             wordleSessionService.submitGuess(session, todaysWord.get(), guess);
-        } catch (WordleSessionService.InvalidGuessException | WordleSessionService.AlreadyCompletedException e) {
+        } catch (WordleSessionService.InvalidGuessException | WordleSessionService.AlreadyCompletedException
+                 | InvalidGeorgianWordException e) {
+            log.warn("Rejected guess for user {} session {}: {}", user.getId(), session.getId(), e.getMessage());
             populateBoardModel(model, session, todaysWord.get());
             model.addAttribute("error", e.getMessage());
             return "wordle";
         }
 
         return "redirect:/wordle";
+    }
+
+    /**
+     * Last-resort handler for unexpected failures during Wordle request handling
+     * (e.g. the authenticated user vanishing, or a service-layer error). Logs the
+     * exception with its stack trace and renders the board view with a generic error.
+     */
+    @ExceptionHandler(Exception.class)
+    public String handleUnexpected(Exception ex, Authentication authentication, Model model) {
+        Long userId = authentication != null && authentication.getPrincipal() instanceof UserDetailsImpl principal
+                ? principal.getId()
+                : null;
+        log.error("Unexpected error handling Wordle request for user {}", userId, ex);
+        model.addAttribute("error", "მოულოდნელი შეცდომა, სცადეთ მოგვიანებით");
+        return "wordle";
     }
 
     private User currentUser(Authentication authentication) {

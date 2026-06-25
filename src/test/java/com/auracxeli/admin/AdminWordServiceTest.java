@@ -1,5 +1,7 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.wordle.InvalidGeorgianWordException;
+import com.auracxeli.wordle.WordleGuessValidator;
 import com.auracxeli.wordle.WordleWord;
 import com.auracxeli.wordle.WordleWordRepository;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,9 @@ class AdminWordServiceTest {
     @Mock
     private WordleWordRepository wordleWordRepository;
 
+    @Mock
+    private WordleGuessValidator wordleGuessValidator;
+
     @InjectMocks
     private AdminWordService adminWordService;
 
@@ -34,6 +39,7 @@ class AdminWordServiceTest {
 
     @Test
     void blankDate_slotsIntoFirstFreeDay() {
+        when(wordleGuessValidator.isValid("ბურთი")).thenReturn(true);
         // today is taken, today+1 is free -> the word should land on today+1
         when(wordleWordRepository.existsByScheduledDate(today)).thenReturn(true);
         when(wordleWordRepository.existsByScheduledDate(today.plusDays(1))).thenReturn(false);
@@ -50,6 +56,7 @@ class AdminWordServiceTest {
 
     @Test
     void blankDate_uniquenessConflict_throwsAndDoesNotSave() {
+        when(wordleGuessValidator.isValid("ბურთი")).thenReturn(true);
         when(wordleWordRepository.existsByScheduledDate(today)).thenReturn(false); // first free = today
         when(wordleWordRepository.existsByWordAndScheduledDateBetween(eq("ბურთი"), any(), any()))
                 .thenReturn(true);
@@ -60,6 +67,7 @@ class AdminWordServiceTest {
 
     @Test
     void givenFreeDate_usesThatDate() {
+        when(wordleGuessValidator.isValid("ბურთი")).thenReturn(true);
         LocalDate requested = today.plusDays(5);
         when(wordleWordRepository.existsByScheduledDate(requested)).thenReturn(false);
         when(wordleWordRepository.existsByWordAndScheduledDateBetween(eq("ბურთი"), any(), any()))
@@ -75,6 +83,7 @@ class AdminWordServiceTest {
 
     @Test
     void givenTakenDate_fallsBackToFirstFreeDay() {
+        when(wordleGuessValidator.isValid("ბურთი")).thenReturn(true);
         LocalDate requested = today.plusDays(5);
         when(wordleWordRepository.existsByScheduledDate(requested)).thenReturn(true);  // requested day taken
         when(wordleWordRepository.existsByScheduledDate(today)).thenReturn(false);     // first free = today
@@ -91,12 +100,22 @@ class AdminWordServiceTest {
 
     @Test
     void givenFreeDate_uniquenessConflict_throws() {
+        when(wordleGuessValidator.isValid("ბურთი")).thenReturn(true);
         LocalDate requested = today.plusDays(5);
         when(wordleWordRepository.existsByScheduledDate(requested)).thenReturn(false);
         when(wordleWordRepository.existsByWordAndScheduledDateBetween(eq("ბურთი"), any(), any()))
                 .thenReturn(true);
 
         assertThrows(DuplicateWordException.class, () -> adminWordService.addWord("ბურთი", requested, 1L));
+        verify(wordleWordRepository, never()).save(any());
+    }
+
+    @Test
+    void addWord_rejectsWordNotInDictionary() {
+        when(wordleGuessValidator.isValid("ააააა")).thenReturn(false);
+
+        assertThrows(InvalidGeorgianWordException.class,
+                () -> adminWordService.addWord("ააააა", null, 1L));
         verify(wordleWordRepository, never()).save(any());
     }
 
