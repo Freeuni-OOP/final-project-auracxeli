@@ -7,12 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.Setter;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "wordle_words")
+@Getter @Setter
 public class WordleWord {
 
     @Id
@@ -48,7 +51,7 @@ public class WordleWord {
         }
     }
 
-    public Long getId()                 { return id; }
+ /*   public Long getId()                 { return id; }
     public String getWord()             { return word; }
     public LocalDate getScheduledDate() { return scheduledDate; }
     public Long getAddedBy()            { return addedBy; }
@@ -57,4 +60,6 @@ public class WordleWord {
     public void setWord(String word)                      { this.word = word; }
     public void setScheduledDate(LocalDate scheduledDate) { this.scheduledDate = scheduledDate; }
     public void setAddedBy(Long addedBy)                  { this.addedBy = addedBy; }
+
+  */
 }

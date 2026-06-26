@@ -7,12 +7,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+
+
 
 /**
  * I store info about one users one attempt that is limited to 1 per day, it is unique in date
  */
 @Entity
 @Table(name = "wordle_sessions")
+@Getter
+
+
 public class WordleSession {
 
     @Id
@@ -50,7 +56,7 @@ public class WordleSession {
             createdAt = LocalDateTime.now();
         }
     }
-
+    /*
     public Long getId()                  { return id; }
     public User getUser()                { return user; }
     public LocalDate getPuzzleDate()      { return puzzleDate; }
@@ -58,5 +64,8 @@ public class WordleSession {
     public LocalDateTime getCreatedAt()   { return createdAt; }
     public List<WordleGuess> getGuesses() { return guesses; }
 
+
+     */
     public void setOutcome(WordleOutcome outcome) { this.outcome = outcome; }
+
 }
