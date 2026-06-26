@@ -25,8 +25,8 @@
                 წააგე. სიტყვა იყო: <span th:text="${revealedWord}"></span>
             </p>
 
-            <div class="wordle-board" id="wordle-board">
-                <div class="wordle-row" th:each="row : ${rows}">
+            <div class="wordle-board" id="wordle-board" th:attr="data-active-row=${attemptsUsed}">
+                <div class="wordle-row" th:each="row, rowStat : ${rows}" th:attr="data-row-index=${rowStat.index}">
                     <span class="t" th:each="tile : ${row}" th:class="${tile.cssClass}" th:text="${tile.letter}"></span>
                 </div>
             </div>
@@ -37,14 +37,15 @@
                 <button type="button" id="share-button" class="wordle-share-btn">გაზიარება</button>
                 <p id="share-feedback" class="wordle-share-feedback" aria-live="polite"></p>
             </div>
-            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post">
+            <p id="js-error" class="wordle-error" style="display:none;"></p>
+            <form th:unless="${readOnly}" class="wordle-form" th:action="@{/wordle/guess}" method="post" novalidate>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <input type="text" name="guess" required="required" minlength="5" maxlength="5" autocomplete="off" autofocus="autofocus"/>
-                <button type="submit">გამოცნობა</button>
+                <input type="hidden" id="guess-input" name="guess"/>
             </form>
         </div>
     </section>
 </main>
+<script th:src="@{/js/app.js}" src="/static/js/app.js"></script>
 <script th:inline="none">
     document.getElementById('share-button')?.addEventListener('click', getWordleEmoji);
 
@@ -90,6 +91,72 @@
                 feedback.textContent = 'კოპირება ვერ მოხერხდა';
             });
     }
+</script>
+<script th:inline="none">
+    (function () {
+        const board = document.getElementById('wordle-board');
+        if (!board) return;
+
+        const guessForm = document.getElementById('guess-form');
+        if (!guessForm) return;
+
+        const activeRowIndex = parseInt(board.dataset.activeRow, 10);
+        const activeRow = board.querySelector('[data-row-index="' + activeRowIndex + '"]');
+        if (!activeRow) return;
+
+        const tiles = Array.from(activeRow.querySelectorAll('.t'));
+        const guessInput = document.getElementById('guess-input');
+
+        activeRow.classList.add('active-row');
+
+        let letters = [];
+        const georgianLetterPattern = /^[ა-ჰ]$/;
+
+        function render() {
+            tiles.forEach(function (tile, i) {
+                tile.textContent = letters[i] ? letters[i].toUpperCase() : '';
+            });
+        }
+
+        function typeLetter(letter) {
+            if (georgianLetterPattern.test(letter) && letters.length < tiles.length) {
+                letters.push(letter);
+                render();
+            }
+        }
+
+        function backspace() {
+            if (letters.length > 0) {
+                letters.pop();
+                render();
+            }
+        }
+
+        function submitGuess() {
+            if (letters.length === tiles.length) {
+                guessInput.value = letters.join('');
+                guessForm.submit();
+            }
+        }
+
+        window.wordleInput = {
+            typeLetter: typeLetter,
+            backspace: backspace,
+            submitGuess: submitGuess
+        };
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                backspace();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                submitGuess();
+            } else if (e.key.length === 1) {
+                typeLetter(e.key);
+            }
+        });
+    })();
 </script>
 </body>
 </html>

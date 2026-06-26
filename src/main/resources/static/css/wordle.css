@@ -113,3 +113,7 @@
     font-weight: 600;
     min-height: 1.2em;
 }
+.wordle-row.active-row .t {
+    border-color: var(--ink);
+    transition: border-color 0.15s ease;
+}
