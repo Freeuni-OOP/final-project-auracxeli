@@ -1,0 +1,112 @@
+.friends {
+    max-width: 640px;
+    padding: 40px 0 56px;
+}
+.friends h1 {
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.flash {
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #eef6ec;
+    color: #2f6b2f;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+.flash.error {
+    background: #fdecec;
+    color: #b3261e;
+}
+
+.add-friend {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+.add-friend input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 15px;
+}
+.add-friend input:focus {
+    outline: 2px solid var(--accent);
+    border-color: transparent;
+}
+
+.friend-block {
+    margin-bottom: 28px;
+}
+.friend-block h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+.empty {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.friend-list {
+    list-style: none;
+}
+.friend-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    margin-bottom: 8px;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+.actions form {
+    display: inline;
+}
+
+.add-friend button,
+.actions button {
+    border: none;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+.actions button.secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+}
+.actions button.danger {
+    background: #b3261e;
+    color: #fff;
+    border: none;
+}
+.logout-form button {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(0.96);
+}
