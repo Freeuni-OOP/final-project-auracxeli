@@ -2,6 +2,7 @@ package com.auracxeli.wordle;
 
 import com.auracxeli.user.User;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.Locale;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class WordleSessionService {
 
     private static final int MAX_GUESSES = 6;
@@ -25,16 +27,6 @@ public class WordleSessionService {
     private final WordleDailyService wordleDailyService;
     private final WordleGuessEvaluator wordleGuessEvaluator;
     private final WordleGuessValidator wordleGuessValidator;
-
-    public WordleSessionService(WordleSessionRepository wordleSessionRepository,
-                                WordleDailyService wordleDailyService,
-                                WordleGuessEvaluator wordleGuessEvaluator,
-                                WordleGuessValidator wordleGuessValidator) {
-        this.wordleSessionRepository = wordleSessionRepository;
-        this.wordleDailyService = wordleDailyService;
-        this.wordleGuessEvaluator = wordleGuessEvaluator;
-        this.wordleGuessValidator = wordleGuessValidator;
-    }
 
     /**
      * Finds today's session for the user, creating one if this is their first

@@ -4,6 +4,7 @@ import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
 import com.auracxeli.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,9 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
+
+
 public class WordleController {
 
     private static final int BOARD_ROWS = 6;
@@ -30,15 +34,6 @@ public class WordleController {
     private final WordleGuessEvaluator wordleGuessEvaluator;
     private final UserRepository userRepository;
 
-    public WordleController(WordleSessionService wordleSessionService,
-                             WordleDailyService wordleDailyService,
-                             WordleGuessEvaluator wordleGuessEvaluator,
-                             UserRepository userRepository) {
-        this.wordleSessionService = wordleSessionService;
-        this.wordleDailyService = wordleDailyService;
-        this.wordleGuessEvaluator = wordleGuessEvaluator;
-        this.userRepository = userRepository;
-    }
 
     @GetMapping("/wordle")
     public String showBoard(Authentication authentication, Model model) {
