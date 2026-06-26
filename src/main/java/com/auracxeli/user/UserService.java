@@ -29,4 +29,10 @@ public class UserService {
         User user = new User(request.username(), request.email(), hashed);
         return userRepository.save(user);
     }
+
+    @Transactional(readOnly = true)
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+    }
 }

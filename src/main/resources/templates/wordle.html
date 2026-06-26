@@ -8,10 +8,8 @@
     <link th:href="@{/css/wordle.css}" href="/static/css/wordle.css" rel="stylesheet"/>
 </head>
 <body>
-<header class="site-header">x`
-    <div class="container">
-        <h1 th:href="@{/}">Wordle</h1>
-    </div>
+<header class="site-header">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 </header>
 <main>
     <section class="container">

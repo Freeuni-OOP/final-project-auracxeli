@@ -1,25 +1,3 @@
-.brand {
-    font-weight: 800;
-    font-size: 20px;
-    color: var(--ink);
-    text-decoration: none;
-}
-
-.logout-form button {
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink);
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-family: var(--font);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-}
-.logout-form button:hover {
-    filter: brightness(0.97);
-}
-
 .profile {
     padding: 48px 0 56px;
     text-align: center;
@@ -28,14 +6,38 @@
     font-size: clamp(26px, 4vw, 38px);
     font-weight: 800;
 }
-.profile .subtitle {
-    margin-top: 8px;
+
+.profile-identity {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 8px;
+}
+.avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+.identity-text { text-align: left; }
+.join-date {
+    margin-top: 6px;
     color: var(--muted);
-    font-size: 16px;
+    font-size: 14px;
 }
 
+.game-stats { margin-top: 36px; }
+
 .stats-grid {
-    margin-top: 32px;
+    margin-top: 24px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--gap);
@@ -70,4 +72,11 @@
 .game-title {
     font-size: 20px;
     font-weight: 800;
+}
+
+.game-history { margin-top: 44px; }
+.game-history .placeholder {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 15px;
 }

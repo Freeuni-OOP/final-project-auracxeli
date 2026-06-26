@@ -50,3 +50,35 @@ main { flex: 1; }
     justify-content: space-between;
     height: 64px;
 }
+
+/* navbar (shared across pages) */
+.brand {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--ink);
+    text-decoration: none;
+}
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.nav-link {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+.nav-link:hover { color: var(--accent); }
+.logout-form button {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.logout-form button:hover { filter: brightness(0.97); }
