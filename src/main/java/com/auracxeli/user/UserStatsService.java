@@ -5,6 +5,7 @@ import com.auracxeli.wordle.WordleOutcome;
 import com.auracxeli.wordle.WordleSession;
 import com.auracxeli.wordle.WordleSessionRepository;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,13 +14,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserStatsService {
 
     private final WordleSessionRepository sessionRepository;
-
-    public UserStatsService(WordleSessionRepository sessionRepository) {
-        this.sessionRepository = sessionRepository;
-    }
 
     public WordleStatsDto getWordleStats(Long userId) {
         //we made puzzle dates UTC so i will use UTC here too.

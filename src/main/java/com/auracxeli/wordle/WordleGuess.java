@@ -3,12 +3,16 @@ package com.auracxeli.wordle;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import lombok.Getter;
+
+
 
 /**
  *  I mirror each guess of a user per session here, also each guess number is unique
  */
 @Entity
 @Table(name = "wordle_guesses")
+@Getter
 public class WordleGuess {
 
     @Id
@@ -42,10 +46,14 @@ public class WordleGuess {
             createdAt = LocalDateTime.now();
         }
     }
+/*
+
 
     public Long getId()                 { return id; }
     public WordleSession getSession()   { return session; }
     public String getGuessWord()        { return guessWord; }
     public Short getGuessNumber()       { return guessNumber; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+ */
 }

@@ -2,9 +2,13 @@ package com.auracxeli.user;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -47,7 +51,7 @@ public class User {
         }
     }
 
-    public Long getId()                 { return id; }
+   /* public Long getId()                 { return id; }
     public String getUsername()         { return username; }
     public String getEmail()            { return email; }
     public String getPassword()         { return password; }
@@ -60,4 +64,5 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public void setRole(Role role)           { this.role = role; }
     public void setActive(boolean active)    { this.isActive = active; }
+    */
 }

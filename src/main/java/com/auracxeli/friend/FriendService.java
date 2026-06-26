@@ -6,19 +6,17 @@ import com.auracxeli.user.User;
 import com.auracxeli.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FriendService {
 
     private final FriendshipRepository friendshipRepository;
     private final UserRepository userRepository;
 
-    public FriendService(FriendshipRepository friendshipRepository, UserRepository userRepository) {
-        this.friendshipRepository = friendshipRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public void sendRequest(Long requesterId, String addresseeUsername) {
