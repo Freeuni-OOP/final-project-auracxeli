@@ -110,3 +110,36 @@
 button:hover {
     filter: brightness(0.96);
 }
+.leaderboard {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.leaderboard th,
+.leaderboard td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.leaderboard th {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+}
+
+.leaderboard tbody tr {
+    background: var(--surface);
+}
+
+.leaderboard tr.current-user {
+    background: var(--accent);
+    color: #fff;
+}
+
+.leaderboard tr.current-user td {
+    color: #fff;
+    border-bottom-color: transparent;
+}
