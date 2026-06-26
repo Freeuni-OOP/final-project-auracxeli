@@ -4,6 +4,7 @@ import com.auracxeli.user.dto.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.validation.BindingResult;
 
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class RegisterController {
     private final UserService userService;
-    public RegisterController(UserService userService) {
-        this.userService = userService;
-    }
+
+
     @GetMapping("/register")
     public String showForm(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest(null, null, null));
