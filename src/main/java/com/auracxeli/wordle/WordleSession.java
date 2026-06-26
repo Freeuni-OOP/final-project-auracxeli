@@ -66,6 +66,7 @@ public class WordleSession {
 
 
      */
+    // not sure if the whole @setter is needed for 1 line
     public void setOutcome(WordleOutcome outcome) { this.outcome = outcome; }
 
 }
