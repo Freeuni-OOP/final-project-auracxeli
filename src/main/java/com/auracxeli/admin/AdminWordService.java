@@ -5,6 +5,7 @@ import com.auracxeli.wordle.WordleGuessValidator;
 import com.auracxeli.wordle.WordleWord;
 import com.auracxeli.wordle.WordleWordRepository;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AdminWordService {
 
     /** A word may not repeat within this many days (before or after) of another use. */
@@ -24,12 +26,6 @@ public class AdminWordService {
 
     private final WordleWordRepository wordleWordRepository;
     private final WordleGuessValidator wordleGuessValidator;
-
-    public AdminWordService(WordleWordRepository wordleWordRepository,
-                            WordleGuessValidator wordleGuessValidator) {
-        this.wordleWordRepository = wordleWordRepository;
-        this.wordleGuessValidator = wordleGuessValidator;
-    }
 
     /** Words scheduled for the next {@value #UPCOMING_DAYS} days, earliest first. */
     public List<WordleWord> upcomingWords() {

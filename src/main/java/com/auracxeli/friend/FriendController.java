@@ -1,6 +1,7 @@
 package com.auracxeli.friend;
 
 import com.auracxeli.user.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,13 +14,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/friends")
+@RequiredArgsConstructor
+
 public class FriendController {
 
     private final FriendService friendService;
-
-    public FriendController(FriendService friendService) {
-        this.friendService = friendService;
-    }
 
     @GetMapping
     public String friendsPage(@AuthenticationPrincipal UserDetailsImpl currentUser, Model model) {

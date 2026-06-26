@@ -3,6 +3,7 @@ package com.auracxeli.user;
 import com.auracxeli.user.dto.ProfileView;
 import com.auracxeli.user.dto.WordleStatsDto;
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Locale;
 
@@ -12,15 +13,11 @@ import java.util.Locale;
  * {@link UserStatsService}). Controllers stay thin by delegating here.
  */
 @Service
+@RequiredArgsConstructor
 public class ProfileService {
 
     private final UserService userService;
     private final UserStatsService userStatsService;
-
-    public ProfileService(UserService userService, UserStatsService userStatsService) {
-        this.userService = userService;
-        this.userStatsService = userStatsService;
-    }
 
     /**
      * Builds the profile view for {@code username}.
