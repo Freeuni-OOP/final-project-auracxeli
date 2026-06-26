@@ -1,7 +1,72 @@
--## Run project with docker:
+# Kartuli Games
+
+Two browser-based games in Georgian (Wordle and Connections) plus a shared platform - auth, profiles, stats, social features, admin, achievements.
+Built with Java 21, Spring Boot 3.4.5, MySQL 8, Thymeleaf, and Spring Security.
+
+## Prerequisites
+
+| Tool | Minimum version |
+|------|----------------|
+| Docker Desktop | current |
+| Java | 21 |
+| Maven | 3.9+ |
+
+Java and Maven are only required if you want to run without Docker or run the test suite.
+
+## Quick start (Docker)
+
+1. Clone the repo:
+
+   ```bash
+   git clone https://github.com/Freeuni-OOP/final-project-auracxeli.git
+   cd final-project-auracxeli
+   ```
+
+2. Create your local env file and fill in the four variables:
+
+   ```bash
+   cp .env.example .env
+   # open .env and set MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
+   ```
+
+3. Build and start:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+App is available at **http://localhost:8080**.
+
+To tail logs: `docker-compose logs -f app`  
+To stop: `docker-compose down`
+
+## Run without Docker
+
+Requires a local MySQL 8 instance. The app reads connection details from
+`src/main/resources/application.properties`; override any property via the
+matching env var (e.g. `SPRING_DATASOURCE_PASSWORD=secret`).
 
 ```bash
-docker-compose up --build
+mvn spring-boot:run
+```
+
+## Project structure
+
+```
+src/main/java/com/auracxeli/
+├── MainApplication.java
+├── config/          # SecurityConfig
+├── user/            # auth: entity, repository, service, controller, dto
+├── wordle/          # entity/repository/service (controller + UI in progress)
+├── connections/     # not yet built
+├── social/          # not yet built
+├── achievement/     # not yet built
+└── admin/           # not yet built
+
+src/main/resources/
+├── db/migration/    # Flyway SQL migrations (V{N}__{description}.sql)
+├── templates/       # Thymeleaf HTML templates
+└── static/          # CSS, JS, images
 ```
 
 ## Logs
@@ -55,28 +120,17 @@ only scalar IDs, dates, and outcomes.
 ## Running tests
 
 ```bash
+# Full build + test (what CI runs)
 mvn verify
+
+# Tests only, no package phase
+mvn test
+
+# Single test class
+mvn test -Dtest=ClassName
+
+# Single test method
+mvn test -Dtest=ClassName#methodName
 ```
 
-Integration tests spin up MySQL via Testcontainers, and Docker must be running locally. If `mvn verify` fails with `Connection refused` / `CannotCreateTransactionException` errors on the Wordle test classes, it's Docker Desktop running low on memory while juggling multiple Testcontainers MySQL instances at once - not a code bug. Try, in order:
-
-1. Free up Docker resources: `docker system prune` (removes stopped containers, unused networks/images), or bump Docker Desktop's memory allocation under Settings → Resources.
-2. If it still fails, split the heavier MySQL-backed test classes from the rest of the suite into two runs, listed explicitly so the two batches together cover every test class (41 tests total as of writing):
-
-   **Batch 1** - the two MySQL-Testcontainers-heavy classes (10 tests):
-   ```
-   mvn test -Dtest=WordleControllerTest,WordleSessionRepositoryTest
-   ```
-
-   **Batch 2** - every other test class (31 tests):
-   ```
-   mvn test -Dtest=MainApplicationIntegrationTest,UserDetailsImplTest,UserDetailsServiceImplTest,UserServiceTest,WordleDailyServiceTest,WordleGuessEvaluatorTest,WordleSessionServiceTest
-   ```
-
-   Both commands above work as-is in Windows `cmd.exe` (e.g. IntelliJ's default Maven runner) since `,` isn't special there. In bash/zsh/PowerShell, quote the whole argument instead:
-   ```bash
-   mvn test "-Dtest=WordleControllerTest,WordleSessionRepositoryTest"
-   mvn test "-Dtest=MainApplicationIntegrationTest,UserDetailsImplTest,UserDetailsServiceImplTest,UserServiceTest,WordleDailyServiceTest,WordleGuessEvaluatorTest,WordleSessionServiceTest"
-   ```
-
-   If a new test class gets added later and isn't in either list above, just add it to Batch 2 (or run `mvn verify` once Docker has more headroom) - these batches are a manual workaround, not an enforced split.
+Integration tests spin up MySQL via Testcontainers - Docker must be running locally.
