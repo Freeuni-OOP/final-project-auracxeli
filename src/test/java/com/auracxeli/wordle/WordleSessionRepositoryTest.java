@@ -15,7 +15,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -130,6 +132,39 @@ class WordleSessionRepositoryTest {
         assertThatThrownBy(() -> wordleSessionRepository.saveAndFlush(session))
                 .isInstanceOf(DataAccessException.class)
                 .hasMessageContaining("chk_guess_number");
+    }
+
+    @Test
+    void findGuessDistribution_bucketsWonGamesByGuessCount() {
+        saveWonSession(LocalDate.of(2026, 2, 1), 3);
+        saveWonSession(LocalDate.of(2026, 2, 2), 3);
+        saveWonSession(LocalDate.of(2026, 2, 3), 5);
+        saveLostSession(LocalDate.of(2026, 2, 4), 6); // losses must not be counted
+
+        Map<Integer, Integer> games = new HashMap<>();
+        for (Object[] row : wordleSessionRepository.findGuessDistribution(testUser.getId())) {
+            games.put(((Number) row[0]).intValue(), ((Number) row[1]).intValue());
+        }
+
+        assertThat(games).containsEntry(3, 2).containsEntry(5, 1);
+        assertThat(games).doesNotContainKey(6); // the lost game is excluded
+    }
+
+    private void saveWonSession(LocalDate date, int guesses) {
+        saveSession(date, guesses, WordleOutcome.WON);
+    }
+
+    private void saveLostSession(LocalDate date, int guesses) {
+        saveSession(date, guesses, WordleOutcome.LOST);
+    }
+
+    private void saveSession(LocalDate date, int guesses, WordleOutcome outcome) {
+        WordleSession session = new WordleSession(testUser, date);
+        for (int n = 1; n <= guesses; n++) {
+            session.getGuesses().add(new WordleGuess(session, "ვარდი", n));
+        }
+        session.setOutcome(outcome);
+        wordleSessionRepository.save(session);
     }
 
 }
