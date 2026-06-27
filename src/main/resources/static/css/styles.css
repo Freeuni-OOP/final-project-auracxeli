@@ -88,3 +88,7 @@ main { flex: 1; }
     justify-content: space-between;
     height: 64px;
 }
+.nav-link.active {
+    color: var(--accent);
+    font-weight: 700;
+}
