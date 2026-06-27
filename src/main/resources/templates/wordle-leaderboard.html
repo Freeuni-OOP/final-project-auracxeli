@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ლიდერბორდი</title>
+    <link th:href="@{/css/styles.css}"  href="/static/css/styles.css"  rel="stylesheet" />
+    <link th:href="@{/css/friends.css}" href="/static/css/friends.css" rel="stylesheet" />
+</head>
+<body>
+<header class="site-header">
+    <div class="container">
+        <h1 th:href="@{/}">Friends</h1>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">გასვლა</button>
+        </form>
+    </div>
+</header>
+
+<main>
+    <section class="friends container">
+        <h2>ლიდერბორდი</h2>
+
+        <p class="empty" th:if="${!hasFriends}">დაიმატე მეგობრები, რათა ნახო ლიდერბორდი</p>
+
+        <table class="leaderboard" th:if="${hasFriends}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>მომხმარებელი</th>
+                <th>სერია</th>
+                <th>მაქს. სერია</th>
+                <th>მოგების %</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry, rowStat : ${entries}"
+                th:class="${entry.isCurrentUser} ? 'current-user' : ''">
+                <td th:text="${rowStat.count}"></td>
+                <td th:text="${entry.username}"></td>
+                <td th:text="${entry.stats.currentStreak}"></td>
+                <td th:text="${entry.stats.maxStreak}"></td>
+                <td th:text="${entry.stats.winPercent} + '%'"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
