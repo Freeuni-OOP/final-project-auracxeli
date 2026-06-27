@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ვორდლის ლიდერბორდი</title>
+    <title>ლიდერბორდი</title>
     <link th:href="@{/css/styles.css}"  href="/static/css/styles.css"  rel="stylesheet" />
     <link th:href="@{/css/friends.css}" href="/static/css/friends.css" rel="stylesheet" />
 </head>
@@ -20,9 +20,9 @@
 
 <main>
     <section class="friends container">
-        <h2>ვორდლის ლიდერბორდი</h2>
+        <h2>ლიდერბორდი</h2>
 
-        <p class="empty" th:if="${!hasFriends}">დაამატე მეგობრები რომ ნახო ლიდერბორდი</p>
+        <p class="empty" th:if="${!hasFriends}">დაიმატე მეგობრები, რათა ნახო ლიდერბორდი</p>
 
         <table class="leaderboard" th:if="${hasFriends}">
             <thead>
@@ -36,12 +36,12 @@
             </thead>
             <tbody>
             <tr th:each="entry, rowStat : ${entries}"
-                th:class="${entry.isCurrentUser()} ? 'current-user' : ''">
+                th:class="${entry.isCurrentUser} ? 'current-user' : ''">
                 <td th:text="${rowStat.count}"></td>
-                <td th:text="${entry.username()}"></td>
-                <td th:text="${entry.stats().currentStreak()}"></td>
-                <td th:text="${entry.stats().maxStreak()}"></td>
-                <td th:text="${entry.stats().winPercent()} + '%'"></td>
+                <td th:text="${entry.username}"></td>
+                <td th:text="${entry.stats.currentStreak}"></td>
+                <td th:text="${entry.stats.maxStreak}"></td>
+                <td th:text="${entry.stats.winPercent} + '%'"></td>
             </tr>
             </tbody>
         </table>

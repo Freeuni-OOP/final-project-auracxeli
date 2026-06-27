@@ -48,6 +48,6 @@ public class FriendLeaderboardController {
         model.addAttribute("hasFriends", hasFriends);
         model.addAttribute("entries", entries);
 
-        return "friend/wordle-leaderboard";
+        return "wordle-leaderboard";
     }
 }

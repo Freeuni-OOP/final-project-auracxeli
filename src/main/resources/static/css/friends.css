@@ -143,3 +143,25 @@ button:hover {
     color: #fff;
     border-bottom-color: transparent;
 }
+.leaderboard-link {
+    display: inline-block;
+    border: 1px solid color-mix(in srgb, var(--yellow) 35%, white);
+    background: color-mix(in srgb, var(--yellow) 18%, white);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.leaderboard-link:hover {
+    filter: brightness(0.97);
+}
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
