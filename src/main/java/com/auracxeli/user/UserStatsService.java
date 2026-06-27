@@ -1,5 +1,6 @@
 package com.auracxeli.user;
 
+import com.auracxeli.user.dto.GuessBucket;
 import com.auracxeli.user.dto.WordleStatsDto;
 import com.auracxeli.wordle.WordleOutcome;
 import com.auracxeli.wordle.WordleSession;
@@ -10,12 +11,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserStatsService {
+
+    private static final int MAX_GUESSES = 6;
 
     private final WordleSessionRepository sessionRepository;
 
@@ -46,6 +51,29 @@ public class UserStatsService {
                 wordleCurrentStreak(finished, today),
                 wordleMaxStreak(finished)
         );
+    }
+
+    /**
+     * The six guess-distribution bars (wins at 1..6 guesses) from a single
+     * aggregate query, with each bar's width normalised so the tallest is 100%.
+     */
+    public List<GuessBucket> getGuessDistribution(Long userId) {
+        int[] counts = new int[MAX_GUESSES];
+        for (Object[] row : sessionRepository.findGuessDistribution(userId)) {
+            int guesses = ((Number) row[0]).intValue();
+            int games = ((Number) row[1]).intValue();
+            if (guesses >= 1 && guesses <= MAX_GUESSES) {
+                counts[guesses - 1] = games;
+            }
+        }
+        int max = Arrays.stream(counts).max().orElse(0);
+
+        List<GuessBucket> bars = new ArrayList<>(MAX_GUESSES);
+        for (int i = 0; i < MAX_GUESSES; i++) {
+            int percent = max == 0 ? 0 : Math.round(counts[i] * 100f / max);
+            bars.add(new GuessBucket(i + 1, counts[i], percent));
+        }
+        return bars;
     }
 
     private int wordleCurrentStreak(List<WordleSession> finished, LocalDate today) {
