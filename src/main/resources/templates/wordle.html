@@ -11,8 +11,8 @@
 <header class="site-header">
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 </header>
-<main>
-    <section class="container">
+<main class="wordle-main">
+    <section class="container wordle-container">
         <div th:if="${noPuzzle}">
             <p>დღეს სიტყვა არ არის დაგეგმილი.</p>
         </div>
@@ -42,6 +42,54 @@
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" id="guess-input" name="guess"/>
             </form>
+            <!-- On-screen Georgian keyboard -->
+            <div id="geo-keyboard" class="geo-keyboard">
+                <div class="geo-keyboard-row">
+                    <button class="geo-key" data-key="ქ">ქ</button>
+                    <button class="geo-key" data-key="წ">წ</button>
+                    <button class="geo-key" data-key="ე">ე</button>
+                    <button class="geo-key" data-key="რ">რ</button>
+                    <button class="geo-key" data-key="ტ">ტ</button>
+                    <button class="geo-key" data-key="ყ">ყ</button>
+                    <button class="geo-key" data-key="უ">უ</button>
+                    <button class="geo-key" data-key="ი">ი</button>
+                    <button class="geo-key" data-key="ო">ო</button>
+                    <button class="geo-key" data-key="პ">პ</button>
+                </div>
+                <div class="geo-keyboard-row">
+                    <button class="geo-key" data-key="ა">ა</button>
+                    <button class="geo-key" data-key="ს">ს</button>
+                    <button class="geo-key" data-key="დ">დ</button>
+                    <button class="geo-key" data-key="ფ">ფ</button>
+                    <button class="geo-key" data-key="გ">გ</button>
+                    <button class="geo-key" data-key="ჰ">ჰ</button>
+                    <button class="geo-key" data-key="ჯ">ჯ</button>
+                    <button class="geo-key" data-key="კ">კ</button>
+                    <button class="geo-key" data-key="ლ">ლ</button>
+                </div>
+                <div class="geo-keyboard-row">
+                    <button class="geo-key geo-key--action" data-action="submit">↵</button>
+                    <button class="geo-key" data-key="ზ">ზ</button>
+                    <button class="geo-key" data-key="ხ">ხ</button>
+                    <button class="geo-key" data-key="ც">ც</button>
+                    <button class="geo-key" data-key="ვ">ვ</button>
+                    <button class="geo-key" data-key="ბ">ბ</button>
+                    <button class="geo-key" data-key="ნ">ნ</button>
+                    <button class="geo-key" data-key="მ">მ</button>
+                    <button class="geo-key geo-key--action" data-action="backspace">⌫</button>
+                </div>
+                <div class="geo-keyboard-row">
+                    <button class="geo-key" data-key="შ">შ</button>
+                    <button class="geo-key" data-key="ჩ">ჩ</button>
+                    <button class="geo-key" data-key="ჭ">ჭ</button>
+                    <button class="geo-key" data-key="ღ">ღ</button>
+                    <button class="geo-key" data-key="თ">თ</button>
+                    <button class="geo-key" data-key="ჟ">ჟ</button>
+                    <button class="geo-key" data-key="ძ">ძ</button>
+                    <button class="geo-key" data-key="წ">წ</button>
+                    <button class="geo-key" data-key="ჯ">ჯ</button>
+                </div>
+            </div>
         </div>
     </section>
 </main>
@@ -158,5 +206,6 @@
         });
     })();
 </script>
+<script th:src="@{/js/keyboard.js}" src="/static/js/keyboard.js"></script>
 </body>
 </html>
