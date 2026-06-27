@@ -57,7 +57,7 @@ public class UserStatsService {
      * The six guess-distribution bars (wins at 1..6 guesses) from a single
      * aggregate query, with each bar's width normalised so the tallest is 100%.
      */
-    public List<GuessBucket> getGuessDistribution(Long userId) {
+    public List<GuessBucket> getWordleGuessDistribution(Long userId) {
         int[] counts = new int[MAX_GUESSES];
         for (Object[] row : sessionRepository.findGuessDistribution(userId)) {
             int guesses = ((Number) row[0]).intValue();

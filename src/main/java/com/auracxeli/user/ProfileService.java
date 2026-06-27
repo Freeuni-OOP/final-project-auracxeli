@@ -32,7 +32,7 @@ public class ProfileService {
                 user.getCreatedAt().toLocalDate(),
                 initialsOf(user.getUsername()),
                 wordleStats,
-                userStatsService.getGuessDistribution(user.getId())
+                userStatsService.getWordleGuessDistribution(user.getId())
         );
     }
 

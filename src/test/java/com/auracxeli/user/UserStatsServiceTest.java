@@ -132,7 +132,7 @@ class UserStatsServiceTest {
         when(sessionRepository.findGuessDistribution(USER_ID))
                 .thenReturn(List.of(new Object[]{3, 4L}, new Object[]{4, 2L}));
 
-        List<GuessBucket> dist = userStatsService.getGuessDistribution(USER_ID);
+        List<GuessBucket> dist = userStatsService.getWordleGuessDistribution(USER_ID);
 
         assertThat(dist).hasSize(6);
         assertThat(dist.get(2).guesses()).isEqualTo(3);
@@ -147,7 +147,7 @@ class UserStatsServiceTest {
     @Test
     void guessDistributionAllZeroWhenNoWinsTest() {
         // findGuessDistribution returns empty by default -> all six bars zero
-        List<GuessBucket> dist = userStatsService.getGuessDistribution(USER_ID);
+        List<GuessBucket> dist = userStatsService.getWordleGuessDistribution(USER_ID);
 
         assertThat(dist).hasSize(6);
         assertThat(dist).allSatisfy(bar -> {
