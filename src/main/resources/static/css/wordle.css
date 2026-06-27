@@ -1,25 +1,27 @@
 .wordle-board {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     align-items: center;
-    margin: 32px 0;
+    margin: 8px 0;
 }
-.wordle-row {
-    display: flex;
-    gap: 6px;
-}
+
 .wordle-row .t {
-    width: 52px;
-    height: 52px;
+    width: 42px;
+    height: 42px;
     display: grid;
     place-items: center;
     border: 2px solid var(--line);
     border-radius: 6px;
     font-weight: 800;
-    font-size: 24px;
+    font-size: 20px;
     color: var(--ink);
 }
+.wordle-row {
+    display: flex;
+    gap: 6px;
+}
+
 .wordle-row .t.g {
     background: var(--green);
     border-color: var(--green);
@@ -118,37 +120,36 @@
     transition: border-color 0.15s ease;
 }
 
-
 /* ── On-screen Georgian keyboard ── */
 .geo-keyboard {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    margin: 12px auto 24px;
+    gap: 4px;
+    margin: 6px auto 8px;
     width: 100%;
     max-width: 500px;
 }
 
 .geo-keyboard-row {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .geo-key {
-    height: 52px;
-    min-width: 36px;
-    padding: 0 6px;
+    height: 44px;
+    min-width: 32px;
+    padding: 0 4px;
     display: grid;
     place-items: center;
     border: 1px solid var(--line);
     border-radius: 6px;
-    background: var(--surface);
+    background: #e5e7eb;
     color: var(--ink);
     font-family: var(--font);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -156,55 +157,82 @@
 }
 
 .geo-key:hover {
-    background: var(--line);
+    background: #d1d5db;
 }
 
 .geo-key:active {
     transform: scale(0.93);
 }
 
-/* action keys (enter / backspace) */
+/* action keys (enter / backspace) — light grey too */
 .geo-key--action {
-    min-width: 52px;
-    font-size: 18px;
-    background: var(--ink);
-    color: #fff;
-    border-color: var(--ink);
+    min-width: 44px;
+    font-size: 16px;
+    background: #e5e7eb;
+    color: var(--ink);
+    border-color: var(--line);
 }
 
 .geo-key--action:hover {
-    opacity: 0.85;
-    background: var(--ink);
+    background: #d1d5db;
 }
 
-/* letter status colors — mirrors tile colors */
+/* wrong guess — dark grey */
+.geo-key.x {
+    background: #6b7280;
+    border-color: #6b7280;
+    color: #fff;
+}
+
+/* correct position — green */
 .geo-key.g {
     background: var(--green);
     border-color: var(--green);
     color: #fff;
 }
 
+/* wrong position — yellow */
 .geo-key.y {
     background: var(--yellow);
     border-color: var(--yellow);
     color: #fff;
 }
 
-.geo-key.x {
-    background: #9ca3af;
-    border-color: #9ca3af;
-    color: #fff;
-}
-
-/* mobile — shrink keys slightly */
+/* mobile */
 @media (max-width: 480px) {
+     .wordle-row .t {
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
+        }
+
     .geo-key {
-        height: 44px;
-        min-width: 30px;
-        font-size: 14px;
-        padding: 0 4px;
+        height: 38px;
+        min-width: 26px;
+        font-size: 12px;
+
     }
     .geo-key--action {
-        min-width: 44px;
+        min-width: 38px;
     }
+}
+
+/* ── Full screen layout ── */
+.wordle-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.wordle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    overflow: hidden;
 }
