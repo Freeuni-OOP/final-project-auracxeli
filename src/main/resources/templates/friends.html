@@ -9,23 +9,14 @@
 </head>
 <body>
 <header class="site-header">
-    <div class="container">
-        <h1 th:href="@{/}">Friends</h1>
-        <div class="header-actions">
-            <a th:href="@{/friends/leaderboard/wordle}" class="leaderboard-link">ლიდერბორდი</a>
-            <form th:action="@{/logout}" method="post" class="logout-form">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit">გასვლა</button>
-            </form>
-        </div>
-    </div>
+    <nav th:replace="~{fragments/navbar :: navbar('friends')}"></nav>
 </header>
 
 <main>
     <section class="friends container">
         <p class="flash" th:if="${message}" th:text="${message}"></p>
         <p class="flash error" th:if="${error}"   th:text="${error}"></p>
-
+        <a th:href="@{/friends/leaderboard/wordle}" class="leaderboard-link">ლიდერბორდი</a>
         <form class="add-friend" th:action="@{/friends/request}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <input type="text" name="username" placeholder="მომხმარებლის სახელი" required />

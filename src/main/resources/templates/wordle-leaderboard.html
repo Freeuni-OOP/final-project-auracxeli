@@ -9,13 +9,7 @@
 </head>
 <body>
 <header class="site-header">
-    <div class="container">
-        <h1 th:href="@{/}">Friends</h1>
-        <form th:action="@{/logout}" method="post" class="logout-form">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit">გასვლა</button>
-        </form>
-    </div>
+    <nav th:replace="~{fragments/navbar :: navbar('')}"></nav>
 </header>
 
 <main>
