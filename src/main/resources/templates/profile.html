@@ -46,7 +46,23 @@
             </div>
         </section>
 
-        <!-- Reserved: Wordle guess-distribution chart (issue #51) lands here. -->
+        <section class="guess-distribution">
+            <h2 class="game-title">გამოცნობების განაწილება</h2>
+
+            <p th:if="${profile.wordleStats.gamesPlayed == 0}" class="placeholder">
+                ჯერ არ გითამაშია — სტატისტიკა აქ გამოჩნდება.
+            </p>
+
+            <div th:unless="${profile.wordleStats.gamesPlayed == 0}" class="dist-chart">
+                <div class="dist-row" th:each="bar : ${profile.guessDistribution}">
+                    <span class="dist-label" th:text="${bar.guesses}">1</span>
+                    <div class="dist-track">
+                        <div class="dist-bar" th:style="'width:' + ${bar.percent} + '%'"></div>
+                    </div>
+                    <span class="dist-count" th:text="${bar.count}">0</span>
+                </div>
+            </div>
+        </section>
 
         <section class="game-history">
             <h2 class="game-title">თამაშების ისტორია</h2>
