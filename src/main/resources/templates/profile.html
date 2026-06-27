@@ -55,7 +55,7 @@
 
             <div th:unless="${profile.wordleStats.gamesPlayed == 0}" class="dist-chart">
                 <div class="dist-row" th:each="bar : ${profile.guessDistribution}">
-                    <span class="dist-label" th:text="${bar.guesses}">1</span>
+                    <span class="dist-label" th:text="|#${bar.guesses}|">#1</span>
                     <div class="dist-track">
                         <div class="dist-bar" th:style="'width:' + ${bar.percent} + '%'"></div>
                     </div>
