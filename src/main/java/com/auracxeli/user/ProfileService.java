@@ -31,7 +31,8 @@ public class ProfileService {
                 user.getUsername(),
                 user.getCreatedAt().toLocalDate(),
                 initialsOf(user.getUsername()),
-                wordleStats
+                wordleStats,
+                userStatsService.getWordleGuessDistribution(user.getId())
         );
     }
 

@@ -80,3 +80,42 @@
     color: var(--muted);
     font-size: 15px;
 }
+
+.guess-distribution { margin-top: 44px; }
+.dist-chart {
+    margin: 16px auto 0;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.dist-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dist-label {
+    width: 16px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--muted);
+}
+.dist-track {
+    flex: 1;
+    height: 22px;
+    background: var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.dist-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+.dist-count {
+    width: 24px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--ink);
+}

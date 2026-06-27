@@ -1,5 +1,6 @@
 package com.auracxeli.user;
 
+import com.auracxeli.user.dto.GuessBucket;
 import com.auracxeli.user.dto.WordleStatsDto;
 import com.auracxeli.wordle.WordleSession;
 import com.auracxeli.wordle.WordleSessionRepository;
@@ -124,6 +125,35 @@ class UserStatsServiceTest {
         givenHistory(List.of(win(2), loss(1), loss(0)));
         WordleStatsDto stats = userStatsService.getWordleStats(USER_ID, TODAY);
         assertThat(stats.winPercent()).isEqualTo(33); // 1/3 rounded
+    }
+
+    @Test
+    void guessDistributionNormalizesLongestBarTo100PercentTest() {
+        when(sessionRepository.findGuessDistribution(USER_ID))
+                .thenReturn(List.of(new Object[]{3, 4L}, new Object[]{4, 2L}));
+
+        List<GuessBucket> dist = userStatsService.getWordleGuessDistribution(USER_ID);
+
+        assertThat(dist).hasSize(6);
+        assertThat(dist.get(2).guesses()).isEqualTo(3);
+        assertThat(dist.get(2).count()).isEqualTo(4);    // tallest bar
+        assertThat(dist.get(2).percent()).isEqualTo(100);
+        assertThat(dist.get(3).count()).isEqualTo(2);
+        assertThat(dist.get(3).percent()).isEqualTo(50); // 2 of 4
+        assertThat(dist.get(0).count()).isZero();
+        assertThat(dist.get(0).percent()).isZero();
+    }
+
+    @Test
+    void guessDistributionAllZeroWhenNoWinsTest() {
+        // findGuessDistribution returns empty by default -> all six bars zero
+        List<GuessBucket> dist = userStatsService.getWordleGuessDistribution(USER_ID);
+
+        assertThat(dist).hasSize(6);
+        assertThat(dist).allSatisfy(bar -> {
+            assertThat(bar.count()).isZero();
+            assertThat(bar.percent()).isZero();
+        });
     }
 
 
