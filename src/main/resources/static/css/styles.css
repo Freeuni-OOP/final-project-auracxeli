@@ -82,3 +82,9 @@ main { flex: 1; }
     cursor: pointer;
 }
 .logout-form button:hover { filter: brightness(0.97); }
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
