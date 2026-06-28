@@ -1,5 +1,7 @@
 package com.auracxeli.connections;
 
+import org.springframework.stereotype.Service;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Service
 public class ConnectionsGuessEvaluator {
 
     public static final int GROUP_SIZE = 4;
