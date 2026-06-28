@@ -18,5 +18,36 @@ public class ConnectionsGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "puzzle_id", nullable = false)
+    private ConnectionsPuzzle puzzle;
+
+    @Column(name = "category", nullable = false, length = 100)
+    private String category;
+    @Column(name = "difficulty", nullable = false)
+    private Short difficulty;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConnectionsWord> words = new ArrayList<>();
+
+    protected ConnectionsGroup() {}
+
+    // I wanted to use here the requiredargsconstructor but we dont have final arguments
+    public ConnectionsGroup(ConnectionsPuzzle puzzle, String category, int difficulty) {
+        this.puzzle = puzzle;
+        this.category = category;
+        this.difficulty = (short) difficulty;
+    }
+
+
+    @PrePersist
+    void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
 
 }
