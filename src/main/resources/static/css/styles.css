@@ -92,3 +92,7 @@ main { flex: 1; }
     color: var(--accent);
     font-weight: 700;
 }
+.brand-logo {
+    height: 140px;
+    display: block;
+}

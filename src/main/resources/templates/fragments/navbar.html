@@ -1,7 +1,9 @@
 <nav th:fragment="navbar(activePage)" xmlns:th="http://www.thymeleaf.org"
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
      class="container navbar">
-    <a class="brand" th:href="@{/}">Auracxeli</a>
+    <a class="brand" th:href="@{/}">
+        <img th:src="@{/images/logo.png}" alt="Auracxeli" class="brand-logo" />
+    </a>
 
     <div class="nav-links">
         <a class="nav-link"
