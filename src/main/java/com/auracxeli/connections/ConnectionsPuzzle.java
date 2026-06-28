@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Entity
 @Getter
-@Table(name = "connections_puzzle")
+@Table(name = "connections_puzzles")
 public class ConnectionsPuzzle {
     protected ConnectionsPuzzle() {}
     // this is gonna be our primary key
