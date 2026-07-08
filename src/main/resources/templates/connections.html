@@ -12,7 +12,9 @@
     <nav th:replace="~{fragments/navbar :: navbar('')}"></nav>
 </header>
 <main class="connections-main">
-    <section class="container connections-container">
+    <section id="connections-app" class="container connections-container"
+             th:data-last-guess-result="${lastGuessResult}"
+             th:data-last-guess-words="${lastGuessWords == null ? '' : #strings.listJoin(lastGuessWords, ',')}">
         <div th:if="${noPuzzle}">
             <p>დღეს თამაში არ არის დაგეგმილი.</p>
         </div>
@@ -23,12 +25,10 @@
             <p th:if="${board.outcome().name() == 'WON'}" class="connections-message win">
                 გილოცავ! ყველა ჯგუფი გამოიცანი!
             </p>
-                <p th:if="${board.outcome().name() == 'LOST'}" class="connections-message lose">
-                    თამაში დამთავრდა.
-                </p>
-                <p class="connections-mistakes">
-                    შეცდომები: <span th:text="${board.mistakesUsed()}"></span>/<span th:text="${board.maxMistakes()}"></span>
-                </p>
+            <p th:if="${board.outcome().name() == 'LOST'}" class="connections-message lose">
+                თამაში დამთავრდა.
+            </p>
+
             <!-- Already-solved groups, colored by difficulty -->
             <div class="connections-solved">
                 <div class="connections-group" th:each="group : ${board.solvedGroups()}"
@@ -59,35 +59,20 @@
                     <button type="submit" id="submit-guess" class="connections-submit-btn" disabled>გაგზავნა</button>
                 </div>
             </form>
+
+            <!-- Mistakes remaining, shown as dots (like the official Connections game).
+                 Filled dot = guess remaining, hollow dot = mistake already used. -->
+            <div class="connections-mistakes">
+                <span class="connections-mistake-label">მცდელობები</span>
+                <span class="connections-dot" th:each="i : ${#numbers.sequence(1, board.maxMistakes())}"
+                      th:classappend="${i > (board.maxMistakes() - board.mistakesUsed())} ? ' spent' : ''"></span>
+            </div>
+
+            <div id="connections-toast" class="connections-toast" role="status" aria-live="polite"></div>
         </div>
     </section>
 </main>
 <script th:src="@{/js/app.js}" src="/static/js/app.js"></script>
-<script th:inline="none">
-    (function () {
-        const form = document.getElementById('guess-form');
-        if (!form) return;
-
-        const checkboxes = Array.from(form.querySelectorAll('.connections-tile-checkbox'));
-        const submitButton = document.getElementById('submit-guess');
-        const MAX_SELECTED = 4;
-
-        function selectedCount() {
-            return checkboxes.filter(cb => cb.checked).length;
-        }
-
-        function updateState() {
-            const count = selectedCount();
-            submitButton.disabled = count !== MAX_SELECTED;
-            checkboxes.forEach(cb => {
-                if (!cb.checked) {
-                    cb.disabled = count >= MAX_SELECTED;
-                }
-            });
-        }
-        checkboxes.forEach(cb => cb.addEventListener('change', updateState));
-        updateState();
-    })();
-</script>
+<script th:src="@{/js/connections.js}" src="/static/js/connections.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -54,6 +54,7 @@ public class ConnectionsController {
     @PostMapping("/connections/guess")
     public String submitGuess(Authentication authentication,
                               @RequestParam(required = false) List<String> words,
+                              RedirectAttributes redirectAttributes,
                               Model model) {
         Optional<ConnectionsPuzzle> todaysPuzzle = connectionsDailyService.getTodaysPuzzle();
         if (todaysPuzzle.isEmpty()) {
@@ -67,7 +68,14 @@ public class ConnectionsController {
         Set<String> selection = words == null ? null : new HashSet<>(words);
 
         try {
-            connectionsSessionService.submitGuess(session, todaysPuzzle.get(), selection);
+            ConnectionsSession updated = connectionsSessionService.submitGuess(session, todaysPuzzle.get(), selection);
+            ConnectionsGuess lastGuess = updated.getGuesses().get(updated.getGuesses().size() - 1);
+            String resultType = classifyGuess(lastGuess, todaysPuzzle.get());
+            redirectAttributes.addFlashAttribute("lastGuessResult", resultType);
+            if (!"correct".equals(resultType)) {
+                redirectAttributes.addFlashAttribute("lastGuessWords",
+                        List.of(lastGuess.getWord1(), lastGuess.getWord2(), lastGuess.getWord3(), lastGuess.getWord4()));
+            }
         } catch (InvalidSelectionException | AlreadyCompletedException e) {
             log.warn("Rejected Connections guess for user {} session {}: {}",
                     user.getId(), session.getId(), e.getMessage());
@@ -77,6 +85,20 @@ public class ConnectionsController {
         }
 
         return "redirect:/connections";
+    }
+
+    /** "correct", "one_away" (3 of 4 words match some group), or "wrong". */
+    private String classifyGuess(ConnectionsGuess guess, ConnectionsPuzzle puzzle) {
+        if (guess.isCorrect()) {
+            return "correct";
+        }
+        List<String> words = List.of(guess.getWord1(), guess.getWord2(), guess.getWord3(), guess.getWord4());
+        for (ConnectionsGroup group : puzzle.getGroups()) {
+            if (connectionsGuessEvaluator.isAlmostCorrect(words, group)) {
+                return "one_away";
+            }
+        }
+        return "wrong";
     }
 
     /**
