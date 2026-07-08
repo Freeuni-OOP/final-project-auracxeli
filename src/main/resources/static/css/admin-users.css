@@ -1,0 +1,127 @@
+.wide-panel {
+    max-width: 960px;
+}
+
+.user-search {
+    margin-bottom: 24px;
+}
+
+.user-search label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search-row input {
+    flex: 1 1 260px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: var(--font);
+}
+
+.search-row input:focus {
+    outline: 2px solid var(--accent);
+    border-color: transparent;
+}
+
+.auth .search-row button {
+    width: auto;
+    min-width: 96px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.search-row a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.search-row a:hover {
+    text-decoration: underline;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-pill.active {
+    background: rgba(106, 170, 100, 0.18);
+    color: #2f6b2f;
+}
+
+.status-pill.blocked {
+    background: rgba(211, 51, 51, 0.12);
+    color: #b91c1c;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.auth .actions button {
+    width: auto;
+    min-width: 100px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.auth .actions .danger {
+    background: #b91c1c;
+}
+
+.auth .actions button:disabled {
+    background: var(--line);
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.notice {
+    text-align: center;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.notice.success {
+    color: var(--green);
+}
+
+.notice.error {
+    color: #b91c1c;
+}
