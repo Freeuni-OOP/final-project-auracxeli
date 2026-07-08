@@ -80,6 +80,46 @@
     color: var(--muted);
     font-size: 15px;
 }
+.history-list {
+    margin: 16px auto 0;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.history-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+}
+.history-date {
+    display: block;
+    font-weight: 800;
+}
+.history-result,
+.history-detail {
+    color: var(--muted);
+    font-size: 14px;
+}
+.history-detail {
+    white-space: nowrap;
+}
+@media (max-width: 520px) {
+    .history-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .history-detail {
+        white-space: normal;
+    }
+}
 
 .guess-distribution { margin-top: 44px; }
 .dist-chart {

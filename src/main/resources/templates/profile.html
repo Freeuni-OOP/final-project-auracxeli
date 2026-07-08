@@ -65,8 +65,21 @@
         </section>
 
         <section class="game-history">
-            <h2 class="game-title">თამაშების ისტორია</h2>
-            <p class="placeholder">მალე დაემატება.</p>
+            <h2 class="game-title">Wordle-ის ისტორია</h2>
+            <p th:if="${#lists.isEmpty(profile.wordleHistory)}" class="placeholder">
+                Wordle ჯერ არ გითამაშია.
+            </p>
+            <div th:unless="${#lists.isEmpty(profile.wordleHistory)}" class="history-list">
+                <div class="history-card" th:each="game : ${profile.wordleHistory}">
+                    <div>
+                        <span class="history-date" th:text="${game.puzzleDate}">2026-01-01</span>
+                        <span class="history-result" th:text="${game.result}">მოგებული</span>
+                    </div>
+                    <span class="history-detail">
+                        ცდები: <span th:text="${game.attemptsUsed}">4</span>
+                    </span>
+                </div>
+            </div>
         </section>
 
         <section class="game-stats" th:if="${profile.connectionsStats.gamesPlayed > 0}">
@@ -92,6 +105,25 @@
                 <div class="stat-card">
                     <span class="stat-value" th:text="${profile.connectionsStats.maxStreak}">0</span>
                     <span class="stat-label">მაქსიმალური Streak</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="game-history">
+            <h2 class="game-title">Connections-ის ისტორია</h2>
+            <p th:if="${#lists.isEmpty(profile.connectionsHistory)}" class="placeholder">
+                Connections ჯერ არ გითამაშია.
+            </p>
+            <div th:unless="${#lists.isEmpty(profile.connectionsHistory)}" class="history-list">
+                <div class="history-card" th:each="game : ${profile.connectionsHistory}">
+                    <div>
+                        <span class="history-date" th:text="${game.puzzleDate}">2026-01-01</span>
+                        <span class="history-result" th:text="${game.result}">მოგებული</span>
+                    </div>
+                    <span class="history-detail">
+                        ცდები: <span th:text="${game.attemptsUsed}">4</span>,
+                        შეცდომები: <span th:text="${game.mistakesCount}">1</span>
+                    </span>
                 </div>
             </div>
         </section>
