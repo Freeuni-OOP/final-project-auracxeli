@@ -1,7 +1,9 @@
 package com.auracxeli.user;
 
 import com.auracxeli.user.dto.GuessBucket;
+import com.auracxeli.user.dto.WordleHistoryItem;
 import com.auracxeli.user.dto.WordleStatsDto;
+import com.auracxeli.wordle.WordleGuess;
 import com.auracxeli.wordle.WordleSession;
 import com.auracxeli.wordle.WordleSessionRepository;
 import org.junit.jupiter.api.Test;
@@ -156,6 +158,24 @@ class UserStatsServiceTest {
         });
     }
 
+    @Test
+    void wordleHistoryReturnsNewestGamesFirstTest() {
+        WordleSession newest = winWithGuesses(0, 3);
+        WordleSession older = lossWithGuesses(1, 6);
+        when(sessionRepository.findByUserIdOrderByPuzzleDateDesc(USER_ID))
+                .thenReturn(List.of(newest, older));
+
+        List<WordleHistoryItem> history = userStatsService.getWordleHistory(USER_ID);
+
+        assertThat(history).hasSize(2);
+        assertThat(history.get(0).puzzleDate()).isEqualTo(TODAY);
+        assertThat(history.get(0).result()).isEqualTo("მოგებული");
+        assertThat(history.get(0).attemptsUsed()).isEqualTo(3);
+        assertThat(history.get(1).puzzleDate()).isEqualTo(TODAY.minusDays(1));
+        assertThat(history.get(1).result()).isEqualTo("წაგებული");
+        assertThat(history.get(1).attemptsUsed()).isEqualTo(6);
+    }
+
 
     private WordleSession session(LocalDate date, com.auracxeli.wordle.WordleOutcome outcome) {
         WordleSession session = new WordleSession(null, date);
@@ -166,6 +186,22 @@ class UserStatsServiceTest {
     private WordleSession win(int daysAgo)        { return session(TODAY.minusDays(daysAgo), WON); }
     private WordleSession loss(int daysAgo)       { return session(TODAY.minusDays(daysAgo), LOST); }
     private WordleSession inProgress(int daysAgo) { return session(TODAY.minusDays(daysAgo), IN_PROGRESS); }
+
+    private WordleSession winWithGuesses(int daysAgo, int guesses) {
+        return sessionWithGuesses(daysAgo, WON, guesses);
+    }
+
+    private WordleSession lossWithGuesses(int daysAgo, int guesses) {
+        return sessionWithGuesses(daysAgo, LOST, guesses);
+    }
+
+    private WordleSession sessionWithGuesses(int daysAgo, com.auracxeli.wordle.WordleOutcome outcome, int guesses) {
+        WordleSession session = session(TODAY.minusDays(daysAgo), outcome);
+        for (int i = 1; i <= guesses; i++) {
+            session.getGuesses().add(new WordleGuess(session, "ვარდი", i));
+        }
+        return session;
+    }
 
     private void givenHistory(List<WordleSession> oldestFirst) {
         when(sessionRepository.findByUserIdOrderByPuzzleDateAsc(USER_ID)).thenReturn(oldestFirst);

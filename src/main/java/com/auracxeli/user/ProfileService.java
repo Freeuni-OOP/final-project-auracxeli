@@ -34,7 +34,9 @@ public class ProfileService {
                 initialsOf(user.getUsername()),
                 wordleStats,
                 userStatsService.getWordleGuessDistribution(user.getId()),
-                connectionsStatsService.getConnectionsStats(user.getId())
+                connectionsStatsService.getConnectionsStats(user.getId()),
+                userStatsService.getWordleHistory(user.getId()),
+                connectionsStatsService.getConnectionsHistory(user.getId())
         );
     }
 

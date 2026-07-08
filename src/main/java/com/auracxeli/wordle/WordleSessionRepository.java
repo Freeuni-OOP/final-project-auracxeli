@@ -14,6 +14,15 @@ public interface WordleSessionRepository extends JpaRepository<WordleSession, Lo
 
     List<WordleSession> findByUserIdOrderByPuzzleDateAsc(Long userId);
 
+    @Query("""
+            SELECT DISTINCT s
+            FROM WordleSession s
+            LEFT JOIN FETCH s.guesses
+            WHERE s.user.id = :userId
+            ORDER BY s.puzzleDate DESC
+            """)
+    List<WordleSession> findByUserIdOrderByPuzzleDateDesc(@Param("userId") Long userId);
+
     /**
      * Guess distribution for a user's won games: how many games were won at each
      * guess count. Returns one row per non-empty bucket as

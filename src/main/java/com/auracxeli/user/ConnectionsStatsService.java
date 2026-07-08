@@ -3,6 +3,7 @@ package com.auracxeli.user;
 import com.auracxeli.connections.ConnectionsOutcome;
 import com.auracxeli.connections.ConnectionsSession;
 import com.auracxeli.connections.ConnectionsSessionRepository;
+import com.auracxeli.user.dto.ConnectionsHistoryItem;
 import com.auracxeli.user.dto.ConnectionsStatsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,24 @@ public class ConnectionsStatsService {
                 currentStreak(finished, today),
                 longestStreak(finished)
         );
+    }
+
+    public List<ConnectionsHistoryItem> getConnectionsHistory(Long userId) {
+        return sessionRepository.findByUserIdOrderByPuzzleDateDesc(userId).stream()
+                .map(session -> new ConnectionsHistoryItem(
+                        session.getPuzzleDate(),
+                        resultLabel(session.getOutcome()),
+                        session.getGuesses().size(),
+                        session.getMistakesCount()))
+                .toList();
+    }
+
+    private String resultLabel(ConnectionsOutcome outcome) {
+        return switch (outcome) {
+            case WON -> "მოგებული";
+            case LOST -> "წაგებული";
+            case IN_PROGRESS -> "მიმდინარე";
+        };
     }
 
     /** Consecutive daily wins ending on the most recent play, or 0 if that play is older than yesterday. */
