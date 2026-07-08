@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Connections</title>
+    <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet"/>
+    <link th:href="@{/css/connections.css}" href="/static/css/connections.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+    <nav th:replace="~{fragments/navbar :: navbar('')}"></nav>
+</header>
+<main class="connections-main">
+    <section class="container connections-container">
+        <div th:if="${noPuzzle}">
+            <p>დღეს თამაში არ არის დაგეგმილი.</p>
+        </div>
+
+        <div th:unless="${noPuzzle}">
+            <p th:if="${error}" class="connections-error" th:text="${error}"></p>
+
+            <p th:if="${board.outcome().name() == 'WON'}" class="connections-message win">
+                გილოცავ! ყველა ჯგუფი გამოიცანი!
+            </p>
+                <p th:if="${board.outcome().name() == 'LOST'}" class="connections-message lose">
+                    თამაში დამთავრდა.
+                </p>
+                <p class="connections-mistakes">
+                    შეცდომები: <span th:text="${board.mistakesUsed()}"></span>/<span th:text="${board.maxMistakes()}"></span>
+                </p>
+            <!-- Already-solved groups, colored by difficulty -->
+            <div class="connections-solved">
+                <div class="connections-group" th:each="group : ${board.solvedGroups()}"
+                     th:classappend="'group-diff-' + ${group.difficulty()}">
+                    <div class="connections-group-category" th:text="${group.category()}"></div>
+                    <div class="connections-group-words" th:text="${#strings.listJoin(group.words(), ', ')}"></div>
+                </div>
+            </div>
+
+            <!-- Revealed answers, shown only when the game was lost -->
+            <div class="connections-revealed" th:if="${not #lists.isEmpty(board.revealedGroups())}">
+                <div class="connections-group revealed" th:each="group : ${board.revealedGroups()}"
+                     th:classappend="'group-diff-' + ${group.difficulty()}">
+                    <div class="connections-group-category" th:text="${group.category()}"></div>
+                    <div class="connections-group-words" th:text="${#strings.listJoin(group.words(), ', ')}"></div>
+                </div>
+            </div>
+
+            <!-- Remaining word grid + guess form -->
+            <form th:unless="${board.readOnly()}" id="guess-form" class="connections-grid"
+                  th:action="@{/connections/guess}" method="post" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <label class="connections-tile" th:each="word : ${board.remainingWords()}">
+                    <input type="checkbox" name="words" th:value="${word}" class="connections-tile-checkbox"/>
+                    <span th:text="${word}"></span>
+                </label>
+                <div class="connections-controls">
+                    <button type="submit" id="submit-guess" class="connections-submit-btn" disabled>გაგზავნა</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/app.js}" src="/static/js/app.js"></script>
+<script th:inline="none">
+    (function () {
+        const form = document.getElementById('guess-form');
+        if (!form) return;
+
+        const checkboxes = Array.from(form.querySelectorAll('.connections-tile-checkbox'));
+        const submitButton = document.getElementById('submit-guess');
+        const MAX_SELECTED = 4;
+
+        function selectedCount() {
+            return checkboxes.filter(cb => cb.checked).length;
+        }
+
+        function updateState() {
+            const count = selectedCount();
+            submitButton.disabled = count !== MAX_SELECTED;
+            checkboxes.forEach(cb => {
+                if (!cb.checked) {
+                    cb.disabled = count >= MAX_SELECTED;
+                }
+            });
+        }
+        checkboxes.forEach(cb => cb.addEventListener('change', updateState));
+        updateState();
+    })();
+</script>
+</body>
+</html>
