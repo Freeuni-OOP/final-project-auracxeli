@@ -1,8 +1,10 @@
 package com.auracxeli.user;
 
 import com.auracxeli.connections.ConnectionsOutcome;
+import com.auracxeli.connections.ConnectionsGuess;
 import com.auracxeli.connections.ConnectionsSession;
 import com.auracxeli.connections.ConnectionsSessionRepository;
+import com.auracxeli.user.dto.ConnectionsHistoryItem;
 import com.auracxeli.user.dto.ConnectionsStatsDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -118,6 +120,26 @@ class ConnectionsStatsServiceTest {
         assertThat(stats.currentStreak()).isEqualTo(1);
     }
 
+    @Test
+    void connectionsHistoryReturnsNewestGamesFirstTest() {
+        ConnectionsSession newest = sessionWithGuesses(0, WON, 1, 4);
+        ConnectionsSession older = sessionWithGuesses(1, LOST, 4, 3);
+        when(sessionRepository.findByUserIdOrderByPuzzleDateDesc(USER_ID))
+                .thenReturn(List.of(newest, older));
+
+        List<ConnectionsHistoryItem> history = connectionsStatsService.getConnectionsHistory(USER_ID);
+
+        assertThat(history).hasSize(2);
+        assertThat(history.get(0).puzzleDate()).isEqualTo(TODAY);
+        assertThat(history.get(0).result()).isEqualTo("მოგებული");
+        assertThat(history.get(0).attemptsUsed()).isEqualTo(4);
+        assertThat(history.get(0).mistakesCount()).isEqualTo(1);
+        assertThat(history.get(1).puzzleDate()).isEqualTo(TODAY.minusDays(1));
+        assertThat(history.get(1).result()).isEqualTo("წაგებული");
+        assertThat(history.get(1).attemptsUsed()).isEqualTo(3);
+        assertThat(history.get(1).mistakesCount()).isEqualTo(4);
+    }
+
     private ConnectionsSession session(LocalDate date, ConnectionsOutcome outcome, int mistakes) {
         ConnectionsSession session = new ConnectionsSession(null, date);
         session.setOutcome(outcome);
@@ -130,6 +152,14 @@ class ConnectionsStatsServiceTest {
     private ConnectionsSession win(int daysAgo, int mistakes)  { return session(TODAY.minusDays(daysAgo), WON, mistakes); }
     private ConnectionsSession loss(int daysAgo, int mistakes) { return session(TODAY.minusDays(daysAgo), LOST, mistakes); }
     private ConnectionsSession inProgress(int daysAgo)         { return session(TODAY.minusDays(daysAgo), IN_PROGRESS, 0); }
+
+    private ConnectionsSession sessionWithGuesses(int daysAgo, ConnectionsOutcome outcome, int mistakes, int guesses) {
+        ConnectionsSession session = session(TODAY.minusDays(daysAgo), outcome, mistakes);
+        for (int i = 1; i <= guesses; i++) {
+            session.getGuesses().add(new ConnectionsGuess(session, "a", "b", "c", "d", i == guesses, i));
+        }
+        return session;
+    }
 
     private void givenHistory(List<ConnectionsSession> oldestFirst) {
         when(sessionRepository.findByUserIdOrderByPuzzleDateAsc(USER_ID)).thenReturn(oldestFirst);
