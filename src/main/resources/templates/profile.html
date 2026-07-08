@@ -69,7 +69,32 @@
             <p class="placeholder">მალე დაემატება.</p>
         </section>
 
-        <!-- Connections stats section will be added here later -->
+        <section class="game-stats" th:if="${profile.connectionsStats.gamesPlayed > 0}">
+            <h2 class="game-title">Connections</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${profile.connectionsStats.gamesPlayed}">0</span>
+                    <span class="stat-label">ნათამაშები</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${profile.connectionsStats.gamesWon}">0</span>
+                    <span class="stat-label">მოგებები</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value"
+                          th:text="${#numbers.formatDecimal(profile.connectionsStats.averageMistakesOnWin, 1, 1)}">0.0</span>
+                    <span class="stat-label">საშ. შეცდომა მოგებისას</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${profile.connectionsStats.currentStreak}">0</span>
+                    <span class="stat-label">მიმდინარე Streak</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${profile.connectionsStats.maxStreak}">0</span>
+                    <span class="stat-label">მაქსიმალური Streak</span>
+                </div>
+            </div>
+        </section>
     </section>
 </main>
 </body>

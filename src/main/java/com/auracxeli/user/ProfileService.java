@@ -18,6 +18,7 @@ public class ProfileService {
 
     private final UserService userService;
     private final UserStatsService userStatsService;
+    private final ConnectionsStatsService connectionsStatsService;
 
     /**
      * Builds the profile view for {@code username}.
@@ -32,7 +33,8 @@ public class ProfileService {
                 user.getCreatedAt().toLocalDate(),
                 initialsOf(user.getUsername()),
                 wordleStats,
-                userStatsService.getWordleGuessDistribution(user.getId())
+                userStatsService.getWordleGuessDistribution(user.getId()),
+                connectionsStatsService.getConnectionsStats(user.getId())
         );
     }
 
