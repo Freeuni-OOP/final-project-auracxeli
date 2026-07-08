@@ -60,7 +60,7 @@ class ConnectionsEntitiesTest {
 
     @Test
     void save_puzzleWithGroupsAndWords_persistsCorrectly() {
-        ConnectionsPuzzle puzzle = new ConnectionsPuzzle(LocalDate.now());
+        ConnectionsPuzzle puzzle = new ConnectionsPuzzle(LocalDate.now().plusYears(1));
         puzzle = puzzleRepository.save(puzzle);
         ConnectionsGroup group = new ConnectionsGroup(puzzle, "მულტფილმები", 1);
         group = groupRepository.save(group);
