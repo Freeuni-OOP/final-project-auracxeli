@@ -13,5 +13,6 @@ public record ProfileView(
         LocalDate joinDate,
         String initials,
         WordleStatsDto wordleStats,
-        List<GuessBucket> guessDistribution
+        List<GuessBucket> guessDistribution,
+        ConnectionsStatsDto connectionsStats
 ) { }
