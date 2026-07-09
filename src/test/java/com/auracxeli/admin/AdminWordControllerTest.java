@@ -1,10 +1,7 @@
 package com.auracxeli.admin;
 
 import com.auracxeli.config.SecurityConfig;
-import com.auracxeli.user.Role;
-import com.auracxeli.user.User;
-import com.auracxeli.user.UserDetailsImpl;
-import com.auracxeli.user.UserRepository;
+import com.auracxeli.user.*;
 import com.auracxeli.wordle.InvalidGeorgianWordException;
 import com.auracxeli.wordle.WordleWord;
 import org.junit.jupiter.api.Test;
@@ -45,6 +42,9 @@ class AdminWordControllerTest {
 
     @MockitoBean
     private AdminWordService adminWordService;
+
+    @MockitoBean
+    private UserStatsService userStatsService;
 
     @MockitoBean
     private UserDetailsService userDetailsService; // required by SecurityConfig's constructor
