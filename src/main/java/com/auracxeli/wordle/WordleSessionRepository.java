@@ -40,4 +40,8 @@ public interface WordleSessionRepository extends JpaRepository<WordleSession, Lo
             GROUP BY sub.num_guesses
             """, nativeQuery = true)
     List<Object[]> findGuessDistribution(@Param("userId") Long userId);
+
+
+     // Count of the user's finished games (anything except IN_PROGRESS)
+    long countByUserIdAndOutcomeNot(Long userId, WordleOutcome outcome);
 }
