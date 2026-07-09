@@ -9,7 +9,7 @@
 </head>
 <body>
 <header class="site-header">
-    <nav th:replace="~{fragments/navbar :: navbar('')}"></nav>
+    <nav th:replace="~{fragments/navbar :: navbar('leaderboard')}"></nav>
 </header>
 
 <main>
@@ -32,7 +32,11 @@
             <tr th:each="entry, rowStat : ${entries}"
                 th:class="${entry.isCurrentUser} ? 'current-user' : ''">
                 <td th:text="${rowStat.count}"></td>
-                <td th:text="${entry.username}"></td>
+                <td>
+                    <a class="leaderboard-profile-link"
+                       th:href="@{/profile/{username}(username=${entry.username})}"
+                       th:text="${entry.username}">user</a>
+                </td>
                 <td th:text="${entry.stats.currentStreak}"></td>
                 <td th:text="${entry.stats.maxStreak}"></td>
                 <td th:text="${entry.stats.winPercent} + '%'"></td>

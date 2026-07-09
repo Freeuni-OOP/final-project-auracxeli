@@ -64,6 +64,14 @@
     background: var(--surface);
     margin-bottom: 8px;
 }
+.friend-profile-link {
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+}
+.friend-profile-link:hover {
+    color: var(--accent);
+}
 
 .actions {
     display: flex;
@@ -143,32 +151,22 @@ button:hover {
     color: #fff;
     border-bottom-color: transparent;
 }
-.leaderboard-link {
-    display: inline-block;
-    border: 1px solid color-mix(in srgb, var(--yellow) 35%, white);
-    background: color-mix(in srgb, var(--yellow) 18%, white);
+.leaderboard-profile-link {
     color: var(--ink);
-    padding: 8px 16px;
-    border-radius: 999px;
-    margin-bottom: 20px;
-    font-family: var(--font);
-    font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    cursor: pointer;
 }
-
-.leaderboard-link:hover {
-    filter: brightness(0.97);
+.leaderboard-profile-link:hover {
+    color: var(--accent);
+}
+.leaderboard tr.current-user .leaderboard-profile-link {
+    color: #fff;
+}
+.leaderboard tr.current-user .leaderboard-profile-link:hover {
+    text-decoration: underline;
 }
 .header-actions {
     display: flex;
     align-items: center;
     gap: 18px;
-}
-
-/* The leaderboard pill keeps its light background in dark mode, so its text
-   must stay dark to remain readable. */
-[data-theme="dark"] .leaderboard-link {
-    color: #1a1a2e;
 }

@@ -12,6 +12,10 @@
            th:href="@{/friends}"
            sec:authorize="isAuthenticated()">მეგობრები</a>
         <a class="nav-link"
+           th:classappend="${activePage == 'leaderboard'} ? 'active' : ''"
+           th:href="@{/friends/leaderboard/wordle}"
+           sec:authorize="isAuthenticated()">ლიდერბორდი</a>
+        <a class="nav-link"
            th:classappend="${activePage == 'profile'} ? 'active' : ''"
            th:href="@{/profile}"
            sec:authorize="isAuthenticated()">პროფილი</a>
