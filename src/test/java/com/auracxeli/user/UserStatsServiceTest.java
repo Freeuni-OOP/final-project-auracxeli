@@ -20,6 +20,7 @@ import static com.auracxeli.wordle.WordleOutcome.IN_PROGRESS;
 import static com.auracxeli.wordle.WordleOutcome.LOST;
 import static com.auracxeli.wordle.WordleOutcome.WON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
