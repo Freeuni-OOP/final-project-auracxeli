@@ -16,11 +16,24 @@
     --conn-gap: 10px;
 }
 
+.connections-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
+}
+
 .connections-container {
+    width: 100%;
     max-width: 560px;
-    margin: 0 auto;
     padding: 16px;
     font-family: inherit;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
 }
 
 .connections-mistakes {
