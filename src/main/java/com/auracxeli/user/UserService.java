@@ -34,4 +34,15 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
+
+    /** Flips the user's theme between LIGHT and DARK and returns the new value. */
+    @Transactional
+    public Theme toggleTheme(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + userId));
+        Theme next = user.getThemePreference() == Theme.DARK ? Theme.LIGHT : Theme.DARK;
+        user.setThemePreference(next);
+        userRepository.save(user);
+        return next;
+    }
 }

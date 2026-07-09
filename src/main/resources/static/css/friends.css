@@ -166,3 +166,9 @@ button:hover {
     align-items: center;
     gap: 18px;
 }
+
+/* The leaderboard pill keeps its light background in dark mode, so its text
+   must stay dark to remain readable. */
+[data-theme="dark"] .leaderboard-link {
+    color: #1a1a2e;
+}
