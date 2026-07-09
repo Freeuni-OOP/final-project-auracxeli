@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ადმინი — მომხმარებლები</title>
+    <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet" />
+    <link th:href="@{/css/auth.css}" href="/static/css/auth.css" rel="stylesheet" />
+    <link th:href="@{/css/admin-users.css}" href="/static/css/admin-users.css" rel="stylesheet" />
+</head>
+<body>
+<header class="site-header">
+    <nav th:replace="~{fragments/navbar :: navbar('')}"></nav>
+</header>
+<main class="container">
+    <section class="auth wide-panel">
+        <h1>მომხმარებლები</h1>
+        <p class="notice success" th:if="${message}" th:text="${message}"></p>
+        <p class="notice error" th:if="${error}" th:text="${error}"></p>
+
+        <form class="user-search" th:action="@{/admin/users}" method="get">
+            <label for="q">მომხმარებლის ძებნა</label>
+            <div class="search-row">
+                <input type="search"
+                       id="q"
+                       name="q"
+                       th:value="${q}"
+                       placeholder="username ან email" />
+                <button type="submit">ძებნა</button>
+                <a th:if="${q != null and !#strings.isEmpty(#strings.trim(q))}" th:href="@{/admin/users}">გასუფთავება</a>
+            </div>
+        </form>
+
+        <table class="users-table">
+            <thead>
+            <tr>
+                <th>მომხმარებელი</th>
+                <th>ელ. ფოსტა</th>
+                <th>როლი</th>
+                <th>სტატუსი</th>
+                <th>ქმედება</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.username}">username</td>
+                <td th:text="${u.email}">email@example.com</td>
+                <td th:text="${u.role}">USER</td>
+                <td>
+                    <span th:class="${u.active} ? 'status-pill active' : 'status-pill blocked'"
+                          th:text="${u.active} ? 'აქტიური' : 'დაბლოკილი'">აქტიური</span>
+                </td>
+                <td>
+                    <div class="actions" th:with="locked=${u.id == currentAdminId or u.role.name() == 'ADMIN'}">
+                        <form th:action="@{/admin/users/{id}/toggle-active(id=${u.id})}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden" name="q" th:value="${q}" />
+                            <button type="submit"
+                                    th:disabled="${locked}"
+                                    th:text="${u.active} ? 'დაბლოკვა' : 'განბლოკვა'">დაბლოკვა</button>
+                        </form>
+                        <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post"
+                              onsubmit="return confirm('წავშალოთ მომხმარებელი?')">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden" name="q" th:value="${q}" />
+                            <button type="submit" class="danger" th:disabled="${locked}">წაშლა</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(users)}">
+                <td colspan="5">მომხმარებელი არ არის</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

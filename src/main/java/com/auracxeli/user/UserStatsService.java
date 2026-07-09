@@ -1,6 +1,7 @@
 package com.auracxeli.user;
 
 import com.auracxeli.user.dto.GuessBucket;
+import com.auracxeli.user.dto.WordleHistoryItem;
 import com.auracxeli.user.dto.WordleStatsDto;
 import com.auracxeli.wordle.WordleOutcome;
 import com.auracxeli.wordle.WordleSession;
@@ -74,6 +75,23 @@ public class UserStatsService {
             bars.add(new GuessBucket(i + 1, counts[i], percent));
         }
         return bars;
+    }
+
+    public List<WordleHistoryItem> getWordleHistory(Long userId) {
+        return sessionRepository.findByUserIdOrderByPuzzleDateDesc(userId).stream()
+                .map(session -> new WordleHistoryItem(
+                        session.getPuzzleDate(),
+                        resultLabel(session.getOutcome()),
+                        session.getGuesses().size()))
+                .toList();
+    }
+
+    private String resultLabel(WordleOutcome outcome) {
+        return switch (outcome) {
+            case WON -> "მოგებული";
+            case LOST -> "წაგებული";
+            case IN_PROGRESS -> "მიმდინარე";
+        };
     }
 
     private int wordleCurrentStreak(List<WordleSession> finished, LocalDate today) {
