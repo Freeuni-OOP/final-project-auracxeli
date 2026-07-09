@@ -38,4 +38,10 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return user.isActive();
     }
+
+
+
+    public String getAvatar() {
+        return user.getAvatar();
+    }
 }

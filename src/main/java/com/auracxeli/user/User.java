@@ -35,6 +35,9 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
+    @Column(nullable = false)
+    private String avatar = "default.png";
+
     protected User() {}
 
     public User(String username, String email, String password) {
@@ -50,6 +53,7 @@ public class User {
             createdAt = LocalDateTime.now();
         }
     }
+
 
    /* public Long getId()                 { return id; }
     public String getUsername()         { return username; }
