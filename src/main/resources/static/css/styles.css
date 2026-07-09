@@ -19,6 +19,17 @@ so feel free to add more styles here as needed */
     --container: 960px;
 }
 
+/* Dark theme: overrides the shared color variables. Game accent colors
+   (green/yellow/blue/purple) are intentionally left unchanged. */
+[data-theme="dark"] {
+    --paper:   #14161a;
+    --surface: #1e2126;
+    --ink:     #e8eaed;
+    --muted:   #9aa0a6;
+    --line:    #2c2f34;
+    --shadow:  0 6px 24px rgba(0, 0, 0, 0.45);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -101,4 +112,13 @@ main { flex: 1; }
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+.theme-form { display: flex; }
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px;
+    cursor: pointer;
 }

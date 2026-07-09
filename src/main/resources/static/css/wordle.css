@@ -147,7 +147,7 @@
     border: 1px solid var(--line);
     border-radius: 6px;
     background: #e5e7eb;
-    color: var(--ink);
+    color: #1a1a2e;
     font-family: var(--font);
     font-size: 14px;
     font-weight: 700;
@@ -169,7 +169,7 @@
     min-width: 44px;
     font-size: 16px;
     background: #e5e7eb;
-    color: var(--ink);
+    color: #1a1a2e;
     border-color: var(--line);
 }
 

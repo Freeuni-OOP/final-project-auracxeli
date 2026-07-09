@@ -37,6 +37,9 @@ public class User {
 
     @Column(nullable = false)
     private String avatar = "default.png";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "theme_preference", nullable = false, length = 10)
+    private Theme themePreference = Theme.LIGHT;
 
     protected User() {}
 

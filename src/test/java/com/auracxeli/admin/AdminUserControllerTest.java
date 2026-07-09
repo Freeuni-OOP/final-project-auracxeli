@@ -4,6 +4,7 @@ import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.user.Role;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
+import com.auracxeli.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,6 +44,9 @@ class AdminUserControllerTest {
 
     @MockitoBean
     private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private UserRepository userRepository; // required by the global theme @ControllerAdvice
 
     @Test
     void getUsersAdminShowsUsersTest() throws Exception {

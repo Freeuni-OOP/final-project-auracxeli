@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<html lang="ka" xmlns:th="http://www.thymeleaf.org" th:attr="data-theme=${theme}">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,7 +21,7 @@
             <div class="identity-text">
                 <h1 th:text="${profile.username}">username</h1>
                 <p class="join-date">
-                    შემოგვიერთდა: <span th:text="${profile.joinDate}">2026-01-01</span>
+                    შემოგვიერთდა <span th:text="${profile.joinDate}">2026-01-01</span>-ში
                 </p>
                 <a class="avatar-edit-link" th:if="${isOwnProfile}" th:href="@{/profile/avatar}">ავატარის შეცვლა</a>
             </div>
@@ -53,7 +53,7 @@
             <h2 class="game-title">გამოცნობების განაწილება</h2>
 
             <p th:if="${profile.wordleStats.gamesPlayed == 0}" class="placeholder">
-                სტატისტიკა ჯერ არ არის.
+                ცარიელია.
             </p>
 
             <div th:unless="${profile.wordleStats.gamesPlayed == 0}" class="dist-chart">
@@ -70,7 +70,7 @@
         <section class="game-history">
             <h2 class="game-title">Wordle-ის ისტორია</h2>
             <p th:if="${#lists.isEmpty(profile.wordleHistory)}" class="placeholder">
-                Wordle ჯერ არ გითამაშია.
+                ცარიელია.
             </p>
             <div th:unless="${#lists.isEmpty(profile.wordleHistory)}" class="history-list">
                 <div class="history-card" th:each="game : ${profile.wordleHistory}">
@@ -115,7 +115,7 @@
         <section class="game-history">
             <h2 class="game-title">Connections-ის ისტორია</h2>
             <p th:if="${#lists.isEmpty(profile.connectionsHistory)}" class="placeholder">
-                Connections ჯერ არ გითამაშია.
+                ცარიელია.
             </p>
             <div th:unless="${#lists.isEmpty(profile.connectionsHistory)}" class="history-list">
                 <div class="history-card" th:each="game : ${profile.connectionsHistory}">
