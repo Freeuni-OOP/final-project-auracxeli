@@ -12,6 +12,12 @@
             <img th:src="@{'/images/avatars/' + ${#authentication.principal.avatar}}"
                  class="nav-avatar" alt="avatar" />
         </a>
+        <div class="level-badge" sec:authorize="isAuthenticated()" th:if="${levelInfo != null}">
+            <span class="level-badge-label" th:text="|Lv. ${levelInfo.level}|">Lv. 1</span>
+            <div class="level-badge-track">
+                <div class="level-badge-fill" th:style="'width:' + ${levelInfo.percentComplete} + '%'"></div>
+            </div>
+        </div>
         <a class="nav-link"
            th:classappend="${activePage == 'friends'} ? 'active' : ''"
            th:href="@{/friends}"
