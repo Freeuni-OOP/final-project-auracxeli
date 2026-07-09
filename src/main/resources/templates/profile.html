@@ -23,7 +23,7 @@
                 <p class="join-date">
                     შემოგვიერთდა: <span th:text="${profile.joinDate}">2026-01-01</span>
                 </p>
-                <a class="avatar-edit-link" th:href="@{/profile/avatar}">ავატარის შეცვლა</a>
+                <a class="avatar-edit-link" th:if="${isOwnProfile}" th:href="@{/profile/avatar}">ავატარის შეცვლა</a>
             </div>
         </div>
 
