@@ -7,6 +7,7 @@ public record ProfileView(
         String username,
         LocalDate joinDate,
         String initials,
+        String avatar,
         WordleStatsDto wordleStats,
         List<GuessBucket> guessDistribution,
         ConnectionsStatsDto connectionsStats,
