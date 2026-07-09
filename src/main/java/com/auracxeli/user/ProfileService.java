@@ -32,6 +32,7 @@ public class ProfileService {
                 user.getUsername(),
                 user.getCreatedAt().toLocalDate(),
                 initialsOf(user.getUsername()),
+                user.getAvatar(),
                 wordleStats,
                 userStatsService.getWordleGuessDistribution(user.getId()),
                 connectionsStatsService.getConnectionsStats(user.getId()),

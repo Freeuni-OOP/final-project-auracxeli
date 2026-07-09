@@ -107,6 +107,11 @@ main { flex: 1; }
     height: 140px;
     display: block;
 }
+.nav-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
 .theme-form { display: flex; }
 .theme-toggle {
     background: none;

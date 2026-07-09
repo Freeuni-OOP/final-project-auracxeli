@@ -7,6 +7,11 @@
     </a>
 
     <div class="nav-links">
+        <a th:href="@{/profile/avatar}" sec:authorize="isAuthenticated()"
+           th:if="${#authentication.principal instanceof T(com.auracxeli.user.UserDetailsImpl)}">
+            <img th:src="@{'/images/avatars/' + ${#authentication.principal.avatar}}"
+                 class="nav-avatar" alt="avatar" />
+        </a>
         <a class="nav-link"
            th:classappend="${activePage == 'friends'} ? 'active' : ''"
            th:href="@{/friends}"

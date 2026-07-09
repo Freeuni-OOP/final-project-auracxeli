@@ -15,12 +15,15 @@
 <main>
     <section class="profile container">
         <div class="profile-identity">
-            <div class="avatar" th:text="${profile.initials}">A</div>
+            <div class="avatar">
+                <img th:src="@{'/images/avatars/' + ${profile.avatar}}" th:alt="${profile.initials}" />
+            </div>
             <div class="identity-text">
                 <h1 th:text="${profile.username}">username</h1>
                 <p class="join-date">
                     შემოგვიერთდა <span th:text="${profile.joinDate}">2026-01-01</span>-ში
                 </p>
+                <a class="avatar-edit-link" th:if="${isOwnProfile}" th:href="@{/profile/avatar}">ავატარის შეცვლა</a>
             </div>
         </div>
 
