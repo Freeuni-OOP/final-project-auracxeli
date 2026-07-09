@@ -35,6 +35,10 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "theme_preference", nullable = false, length = 10)
+    private Theme themePreference = Theme.LIGHT;
+
     protected User() {}
 
     public User(String username, String email, String password) {
