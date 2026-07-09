@@ -1,6 +1,7 @@
 package com.auracxeli.admin;
 
 import com.auracxeli.config.SecurityConfig;
+import com.auracxeli.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,6 +27,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private UserDetailsService userDetailsService; // required by SecurityConfig's constructor
+
+    @MockitoBean
+    private UserRepository userRepository; // required by the global theme @ControllerAdvice
 
     @Test
     @WithMockUser(roles = "ADMIN")
