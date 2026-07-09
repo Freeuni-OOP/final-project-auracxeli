@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ავატარის არჩევა</title>
+    <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet" />
+    <link th:href="@{/css/auth.css}"   href="/static/css/auth.css"   rel="stylesheet" />
+    <style>
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 16px;
+        }
+        .avatar-option {
+            display: contents;
+        }
+        .avatar-btn {
+            border: 2px solid transparent;
+            border-radius: 50%;
+            padding: 4px;
+            background: none;
+            cursor: pointer;
+        }
+        .avatar-btn img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
+        .avatar-btn.selected {
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <nav th:replace="~{fragments/navbar :: navbar('profile')}"></nav>
+</header>
+<main class="container">
+    <section class="auth wide-form">
+        <h1>ავატარის არჩევა</h1>
+        <div class="avatar-grid">
+            <form th:each="a : ${avatars}" th:action="@{/profile/avatar}" method="post" class="avatar-option">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="avatar" th:value="${a}" />
+                <button type="submit" class="avatar-btn" th:classappend="${a == currentAvatar} ? 'selected' : ''">
+                    <img th:src="@{'/images/avatars/' + ${a}}" th:alt="${a}" />
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>
