@@ -38,8 +38,8 @@ class AdminUserServiceTest {
         List<UserRow> rows = adminUserService.listUsers();
 
         assertEquals(1, rows.size());
-        assertEquals("ana", rows.get(0).username());
-        assertEquals("ana@example.com", rows.get(0).email());
+        assertEquals("ana", rows.getFirst().username());
+        assertEquals("ana@example.com", rows.getFirst().email());
         verify(userRepository).findAllByOrderByUsernameAsc();
     }
 
@@ -51,7 +51,7 @@ class AdminUserServiceTest {
         List<UserRow> rows = adminUserService.listUsers("   ");
 
         assertEquals(1, rows.size());
-        assertEquals("ana", rows.get(0).username());
+        assertEquals("ana", rows.getFirst().username());
         verify(userRepository).findAllByOrderByUsernameAsc();
     }
 
@@ -63,7 +63,7 @@ class AdminUserServiceTest {
         List<UserRow> rows = adminUserService.listUsers(" gio ");
 
         assertEquals(1, rows.size());
-        assertEquals("gio", rows.get(0).username());
+        assertEquals("gio", rows.getFirst().username());
         verify(userRepository).findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByUsernameAsc(
                 "gio", "gio");
     }
