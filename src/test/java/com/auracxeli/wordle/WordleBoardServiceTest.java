@@ -53,7 +53,7 @@ class WordleBoardServiceTest {
         assertEquals(1, view.attemptsUsed());
         assertTrue(view.readOnly());
         assertNull(view.revealedWord());
-        assertTrue(view.rows().get(0).stream().allMatch(t -> "t g".equals(t.cssClass())));
+        assertTrue(view.rows().getFirst().stream().allMatch(t -> "t g".equals(t.cssClass())));
         // guessed row plus blank padding
         assertEquals(BOARD_ROWS, view.rows().size());
     }

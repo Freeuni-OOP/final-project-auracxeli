@@ -96,7 +96,7 @@ class ConnectionsSessionServiceTest {
         ConnectionsSession result = service.submitGuess(session, puzzle, aSelection());
 
         assertEquals(1, result.getGuesses().size());
-        assertTrue(result.getGuesses().get(0).isCorrect());
+        assertTrue(result.getGuesses().getFirst().isCorrect());
         assertEquals(0, result.getMistakesCount());
         assertEquals(ConnectionsOutcome.IN_PROGRESS, result.getOutcome()); // only 1 of 4 groups
     }
