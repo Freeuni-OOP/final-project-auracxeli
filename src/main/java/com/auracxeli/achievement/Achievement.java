@@ -1,5 +1,7 @@
 package com.auracxeli.achievement;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -30,8 +32,11 @@ public enum Achievement {
     REGULAR("ვეტერანი", "25 დასრულებული თამაში", "📅",
             ctx -> ctx.totalGamesPlayed() >= 25);
 
+    @Getter
     private final String title;
+    @Getter
     private final String description;
+    @Getter
     private final String icon;
     private final Predicate<AchievementContext> earnedWhen;
 
@@ -46,14 +51,13 @@ public enum Achievement {
         return earnedWhen.test(context);
     }
 
-    /** Every achievement whose rule the given context satisfies. */
+    /**
+     * Every achievement whose rule the given context satisfies.
+     */
     public static Set<Achievement> earnedFor(AchievementContext context) {
         return Arrays.stream(values())
                 .filter(achievement -> achievement.isEarnedBy(context))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    public String getTitle()       { return title; }
-    public String getDescription() { return description; }
-    public String getIcon()        { return icon; }
 }

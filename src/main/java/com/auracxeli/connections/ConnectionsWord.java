@@ -9,11 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 // this class is for the single word in connections
 @Getter
 @Entity
 @Table(name = "connections_words")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConnectionsWord {
 
     @Id
@@ -24,8 +27,6 @@ public class ConnectionsWord {
     private ConnectionsGroup group;
     @Column(name = "word", nullable = false, length = 50)
     private String word;
-
-    protected ConnectionsWord() {}
 
     public ConnectionsWord(ConnectionsGroup group, String word) {
         this.group = group;

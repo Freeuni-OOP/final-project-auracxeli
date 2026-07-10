@@ -9,7 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,8 +20,8 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "connections_puzzles")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConnectionsPuzzle {
-    protected ConnectionsPuzzle() {}
     // this is gonna be our primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
