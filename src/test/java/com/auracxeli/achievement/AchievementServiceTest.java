@@ -120,7 +120,7 @@ class AchievementServiceTest {
     /** A single Wordle win: qualifies for FIRST_WIN only. */
     private void stubContextForSingleWordleWin() {
         when(userStatsService.getWordleStats(USER_ID)).thenReturn(new WordleStatsDto(1, 1, 100, 1, 1));
-        when(connectionsStatsService.getConnectionsStats(USER_ID)).thenReturn(new ConnectionsStatsDto(0, 0, 0, 0, 0));
+        when(connectionsStatsService.getConnectionsStats(USER_ID)).thenReturn(new ConnectionsStatsDto(0, 0, 0, 0, 0,100));
         when(userStatsService.getWordleGuessDistribution(USER_ID))
                 .thenReturn(List.of(new GuessBucket(3, 1, 100)));
         when(connectionsSessionRepository.existsByUserIdAndOutcomeAndMistakesCount(USER_ID, ConnectionsOutcome.WON, 0))

@@ -25,8 +25,7 @@
                 <th>მომხმარებელი</th>
                 <th>სერია</th>
                 <th>მაქს. სერია</th>
-                <th>მოგებები</th>
-                <th>საშ. შეცდომა</th>
+                <th>მოგების %</th>
             </tr>
             </thead>
             <tbody>
@@ -40,8 +39,7 @@
                 </td>
                 <td th:text="${entry.stats.currentStreak}"></td>
                 <td th:text="${entry.stats.maxStreak}"></td>
-                <td th:text="${entry.stats.gamesWon}"></td>
-                <td th:text="${#numbers.formatDecimal(entry.stats.averageMistakesOnWin, 1, 1)}"></td>
+                <td th:text="${entry.stats.winPercent} + '%'"></td>
             </tr>
             </tbody>
         </table>

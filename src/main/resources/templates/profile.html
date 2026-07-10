@@ -97,7 +97,7 @@
             </div>
         </section>
 
-        <section class="game-stats" th:if="${profile.connectionsStats.gamesPlayed > 0}">
+        <section class="game-stats">
             <h2 class="game-title">Connections</h2>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -105,13 +105,8 @@
                     <span class="stat-label">ნათამაშები</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-value" th:text="${profile.connectionsStats.gamesWon}">0</span>
-                    <span class="stat-label">მოგებები</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value"
-                          th:text="${#numbers.formatDecimal(profile.connectionsStats.averageMistakesOnWin, 1, 1)}">0.0</span>
-                    <span class="stat-label">საშ. შეცდომა მოგებისას</span>
+                    <span class="stat-value" th:text="|${profile.connectionsStats.winPercent}%|">0%</span>
+                    <span class="stat-label">მოგების პროცენტულობა</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-value" th:text="${profile.connectionsStats.currentStreak}">0</span>

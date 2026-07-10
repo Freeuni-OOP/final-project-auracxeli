@@ -49,12 +49,18 @@ public class ConnectionsStatsService {
         log.debug("Computed Connections stats for user {}: played={} won={} avgMistakes={}",
                 userId, gamesPlayed, gamesWon, averageMistakesOnWin);
 
+
+
+
+        int winPercent = gamesPlayed == 0 ? 0 : Math.round((float) gamesWon * 100 / gamesPlayed);
+
         return new ConnectionsStatsDto(
                 gamesPlayed,
                 gamesWon,
                 averageMistakesOnWin,
                 currentStreak(finished, today),
-                longestStreak(finished)
+                longestStreak(finished),
+                winPercent
         );
     }
 
