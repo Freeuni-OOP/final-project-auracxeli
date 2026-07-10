@@ -1,8 +1,10 @@
 package com.auracxeli.wordle;
 
+import com.auracxeli.achievement.GameFinishedEvent;
 import com.auracxeli.user.User;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class WordleSessionService {
     private final WordleDailyService wordleDailyService;
     private final WordleGuessEvaluator wordleGuessEvaluator;
     private final WordleGuessValidator wordleGuessValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Finds today's session for the user, creating one if this is their first
@@ -89,6 +92,7 @@ public class WordleSessionService {
         if (session.getOutcome() != WordleOutcome.IN_PROGRESS) {
             log.info("User {} finished game {} outcome={} attempts={}",
                     session.getUser().getId(), session.getId(), session.getOutcome(), guessNumber);
+            eventPublisher.publishEvent(new GameFinishedEvent(session.getUser().getId()));
         }
         return new GuessResult(feedback, session.getOutcome());
     }

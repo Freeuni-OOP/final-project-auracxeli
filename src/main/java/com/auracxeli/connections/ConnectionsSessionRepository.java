@@ -13,6 +13,8 @@ public interface ConnectionsSessionRepository extends JpaRepository<ConnectionsS
 
     List<ConnectionsSession> findByUserIdOrderByPuzzleDateAsc(Long userId);
 
+    boolean existsByUserIdAndOutcomeAndMistakesCount(Long userId, ConnectionsOutcome outcome, int mistakesCount);
+
     @Query("""
             SELECT DISTINCT s
             FROM ConnectionsSession s

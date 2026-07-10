@@ -27,6 +27,18 @@
             </div>
         </div>
 
+        <section class="achievements">
+            <h2 class="game-title">მიღწევები</h2>
+            <div class="badge-grid">
+                <div class="badge" th:each="a : ${profile.achievements}"
+                     th:classappend="${a.earned} ? 'earned' : 'locked'"
+                     th:title="${a.description}">
+                    <span class="badge-icon" th:text="${a.icon}">🏆</span>
+                    <span class="badge-title" th:text="${a.title}">Achievement</span>
+                </div>
+            </div>
+        </section>
+
         <section class="game-stats">
             <h2 class="game-title">Wordle</h2>
             <div class="stats-grid">

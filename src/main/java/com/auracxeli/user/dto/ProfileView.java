@@ -12,5 +12,6 @@ public record ProfileView(
         List<GuessBucket> guessDistribution,
         ConnectionsStatsDto connectionsStats,
         List<WordleHistoryItem> wordleHistory,
-        List<ConnectionsHistoryItem> connectionsHistory
+        List<ConnectionsHistoryItem> connectionsHistory,
+        List<AchievementView> achievements
 ) { }

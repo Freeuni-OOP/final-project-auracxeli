@@ -1,11 +1,17 @@
 package com.auracxeli.user;
 
+import com.auracxeli.achievement.Achievement;
+import com.auracxeli.achievement.AchievementService;
+import com.auracxeli.user.dto.AchievementView;
 import com.auracxeli.user.dto.ProfileView;
 import com.auracxeli.user.dto.WordleStatsDto;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Assembles a {@link ProfileView} for a user from the pieces that live in
@@ -19,6 +25,7 @@ public class ProfileService {
     private final UserService userService;
     private final UserStatsService userStatsService;
     private final ConnectionsStatsService connectionsStatsService;
+    private final AchievementService achievementService;
 
     /**
      * Builds the profile view for {@code username}.
@@ -37,8 +44,16 @@ public class ProfileService {
                 userStatsService.getWordleGuessDistribution(user.getId()),
                 connectionsStatsService.getConnectionsStats(user.getId()),
                 userStatsService.getWordleHistory(user.getId()),
-                connectionsStatsService.getConnectionsHistory(user.getId())
+                connectionsStatsService.getConnectionsHistory(user.getId()),
+                achievements(user.getId())
         );
+    }
+
+    private List<AchievementView> achievements(Long userId) {
+        Set<Achievement> earned = achievementService.getEarnedAchievements(userId);
+        return Arrays.stream(Achievement.values())
+                .map(a -> new AchievementView(a.getTitle(), a.getDescription(), a.getIcon(), earned.contains(a)))
+                .toList();
     }
 
     /** First one or two characters of the username, used as an avatar badge. */
