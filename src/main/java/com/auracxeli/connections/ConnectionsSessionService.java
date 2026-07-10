@@ -2,6 +2,7 @@ package com.auracxeli.connections;
 
 import com.auracxeli.achievement.GameFinishedEvent;
 import com.auracxeli.user.User;
+import com.auracxeli.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,17 +29,20 @@ public class ConnectionsSessionService {
     private final ConnectionsSessionRepository connectionsSessionRepository;
     private final ConnectionsGuessEvaluator connectionsGuessEvaluator;
     private final ApplicationEventPublisher eventPublisher;
+    private final UserRepository userRepository;
 
     /**
      * Find today's session for the user. if it cant find it creates one on their first visit today.
      */
     @Transactional
-    public ConnectionsSession getOrCreateTodaysSession(User user) {
+    public ConnectionsSession getOrCreateTodaysSession(Long userId) {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        return connectionsSessionRepository.findByPuzzleDateAndUserId(today, user.getId())
+        return connectionsSessionRepository.findByPuzzleDateAndUserId(today, userId)
                 .orElseGet(() -> {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + userId));
                     ConnectionsSession created = connectionsSessionRepository.save(new ConnectionsSession(user, today));
-                    log.info("Started Connections game for user {} on {}", user.getId(), today);
+                    log.info("Started Connections game for user {} on {}", userId, today);
                     return created;
                 });
     }

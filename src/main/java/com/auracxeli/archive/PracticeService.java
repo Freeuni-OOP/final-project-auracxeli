@@ -7,7 +7,7 @@ import com.auracxeli.connections.ConnectionsOutcome;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsWord;
 import com.auracxeli.wordle.LetterFeedback;
-import com.auracxeli.wordle.WordleController;
+import com.auracxeli.wordle.Tile;
 import com.auracxeli.wordle.WordleGuessEvaluator;
 import com.auracxeli.wordle.WordleGuessValidator;
 import com.auracxeli.wordle.WordleOutcome;
@@ -59,7 +59,7 @@ public class PracticeService {
 
     /** Replays {@code guesses} against {@code word} to build the board to render. */
     public WordlePracticeView buildWordleBoard(List<String> guesses, WordleWord word) {
-        List<List<WordleController.Tile>> rows = new ArrayList<>();
+        List<List<Tile>> rows = new ArrayList<>();
         WordleOutcome outcome = WordleOutcome.IN_PROGRESS;
 
         for (String guess : guesses) {
@@ -81,19 +81,19 @@ public class PracticeService {
         return new WordlePracticeView(rows, outcome, readOnly, guesses.size(), WORDLE_MAX_GUESSES, revealedWord);
     }
 
-    private List<WordleController.Tile> toTiles(String word, List<LetterFeedback> feedback) {
-        List<WordleController.Tile> tiles = new ArrayList<>();
+    private List<Tile> toTiles(String word, List<LetterFeedback> feedback) {
+        List<Tile> tiles = new ArrayList<>();
         String upper = word.toUpperCase(Locale.ROOT);
         for (int i = 0; i < feedback.size(); i++) {
-            tiles.add(new WordleController.Tile(String.valueOf(upper.charAt(i)), cssClassFor(feedback.get(i))));
+            tiles.add(new Tile(String.valueOf(upper.charAt(i)), cssClassFor(feedback.get(i))));
         }
         return tiles;
     }
 
-    private List<WordleController.Tile> blankRow() {
-        List<WordleController.Tile> tiles = new ArrayList<>();
+    private List<Tile> blankRow() {
+        List<Tile> tiles = new ArrayList<>();
         for (int i = 0; i < WordleGuessEvaluator.WORD_LENGTH; i++) {
-            tiles.add(new WordleController.Tile("", "t"));
+            tiles.add(new Tile("", "t"));
         }
         return tiles;
     }
@@ -199,7 +199,7 @@ public class PracticeService {
 
     /** View model for a practice Wordle board - mirrors what {@code wordle.html} expects. */
     public record WordlePracticeView(
-            List<List<WordleController.Tile>> rows,
+            List<List<Tile>> rows,
             WordleOutcome outcome,
             boolean readOnly,
             int attemptsUsed,

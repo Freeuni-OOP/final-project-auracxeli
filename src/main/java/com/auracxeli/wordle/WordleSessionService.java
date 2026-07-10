@@ -2,6 +2,7 @@ package com.auracxeli.wordle;
 
 import com.auracxeli.achievement.GameFinishedEvent;
 import com.auracxeli.user.User;
+import com.auracxeli.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,6 +31,7 @@ public class WordleSessionService {
     private final WordleGuessEvaluator wordleGuessEvaluator;
     private final WordleGuessValidator wordleGuessValidator;
     private final ApplicationEventPublisher eventPublisher;
+    private final UserRepository userRepository;
 
     /**
      * Finds today's session for the user, creating one if this is their first
@@ -38,13 +40,15 @@ public class WordleSessionService {
      * @throws NoDailyWordException if no word is scheduled for today
      */
     @Transactional
-    public WordleSession getOrCreateTodaysSession(User user) {
+    public WordleSession getOrCreateTodaysSession(Long userId) {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        return wordleSessionRepository.findByUserIdAndPuzzleDate(user.getId(), today)
+        return wordleSessionRepository.findByUserIdAndPuzzleDate(userId, today)
                 .orElseGet(() -> {
                     wordleDailyService.getTodaysWord().orElseThrow(NoDailyWordException::new);
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + userId));
                     WordleSession created = wordleSessionRepository.save(new WordleSession(user, today));
-                    log.info("Started Wordle game for user {} on {}", user.getId(), today);
+                    log.info("Started Wordle game for user {} on {}", userId, today);
                     return created;
                 });
     }

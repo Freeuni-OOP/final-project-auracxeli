@@ -1,6 +1,7 @@
 package com.auracxeli.connections;
 
 import com.auracxeli.user.User;
+import com.auracxeli.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ class ConnectionsSessionServiceTest {
     @Mock private ConnectionsSessionRepository connectionsSessionRepository;
     @Mock private ConnectionsGuessEvaluator connectionsGuessEvaluator;
     @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private UserRepository userRepository;
     @InjectMocks private ConnectionsSessionService service;
 
     private User user;
@@ -67,7 +69,7 @@ class ConnectionsSessionServiceTest {
         when(connectionsSessionRepository.findByPuzzleDateAndUserId(any(), any()))
                 .thenReturn(Optional.of(existing));
 
-        ConnectionsSession result = service.getOrCreateTodaysSession(user);
+        ConnectionsSession result = service.getOrCreateTodaysSession(1L);
 
         assertSame(existing, result);
         verify(connectionsSessionRepository, never()).save(any());
@@ -77,11 +79,23 @@ class ConnectionsSessionServiceTest {
     void getOrCreateCreatesNewSessionWhenNoneTest() {
         when(connectionsSessionRepository.findByPuzzleDateAndUserId(any(), any()))
                 .thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        ConnectionsSession result = service.getOrCreateTodaysSession(user);
+        ConnectionsSession result = service.getOrCreateTodaysSession(1L);
 
         assertEquals(ConnectionsOutcome.IN_PROGRESS, result.getOutcome());
         verify(connectionsSessionRepository).save(any(ConnectionsSession.class));
+    }
+
+    @Test
+    void getOrCreateThrowsWhenUserNoLongerExistsTest() {
+        when(connectionsSessionRepository.findByPuzzleDateAndUserId(any(), any()))
+                .thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class,
+                () -> service.getOrCreateTodaysSession(1L));
+        verify(connectionsSessionRepository, never()).save(any());
     }
 
     @Test
@@ -93,7 +107,7 @@ class ConnectionsSessionServiceTest {
         ConnectionsSession result = service.submitGuess(session, puzzle, aSelection());
 
         assertEquals(1, result.getGuesses().size());
-        assertTrue(result.getGuesses().get(0).isCorrect());
+        assertTrue(result.getGuesses().getFirst().isCorrect());
         assertEquals(0, result.getMistakesCount());
         assertEquals(ConnectionsOutcome.IN_PROGRESS, result.getOutcome()); // only 1 of 4 groups
     }
