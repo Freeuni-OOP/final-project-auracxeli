@@ -1,5 +1,8 @@
 package com.auracxeli.friend;
 
+import com.auracxeli.friend.dto.ConnectionsLeaderboardEntry;
+import com.auracxeli.user.ConnectionsStatsService;
+import com.auracxeli.user.dto.ConnectionsStatsDto;
 import com.auracxeli.friend.dto.LeaderboardEntry;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserStatsService;
@@ -67,6 +70,43 @@ public class FriendLeaderboardService {
                 }
                 return a.username().toLowerCase().compareTo(b.username().toLowerCase());
             }
+        });
+        return sorted;
+    }
+    private final ConnectionsStatsService connectionsStatsService;
+
+    public List<ConnectionsLeaderboardEntry> buildConnectionsLeaderboard(User currentUser) {
+        List<Friendship> accepted = fr.findByStatusForUser(currentUser.getId(), FriendshipStatus.ACCEPTED);
+        List<User> everyone = new ArrayList<>();
+        everyone.add(currentUser);
+        for (Friendship friendship : accepted) {
+            everyone.add(otherUser(friendship, currentUser.getId()));
+        }
+        List<ConnectionsLeaderboardEntry> entries = new ArrayList<>();
+        for (User user : everyone) {
+            entries.add(toConnectionsEntry(user, currentUser.getId()));
+        }
+        return rankConnections(entries);
+    }
+
+    private ConnectionsLeaderboardEntry toConnectionsEntry(User user, Long currentUserId) {
+        ConnectionsStatsDto stats = connectionsStatsService.getConnectionsStats(user.getId());
+        boolean isCurrentUser = user.getId().equals(currentUserId);
+        return new ConnectionsLeaderboardEntry(user.getId(), user.getUsername(), stats, isCurrentUser);
+    }
+
+    List<ConnectionsLeaderboardEntry> rankConnections(List<ConnectionsLeaderboardEntry> entries) {
+        List<ConnectionsLeaderboardEntry> sorted = new ArrayList<>(entries);
+        sorted.sort((a, b) -> {
+            if (a.stats().currentStreak() != b.stats().currentStreak()) {
+                return b.stats().currentStreak() - a.stats().currentStreak();
+            }
+            double rateA = a.stats().gamesPlayed() == 0 ? 0 : (double) a.stats().gamesWon() / a.stats().gamesPlayed();
+            double rateB = b.stats().gamesPlayed() == 0 ? 0 : (double) b.stats().gamesWon() / b.stats().gamesPlayed();
+            if (rateA != rateB) {
+                return Double.compare(rateB, rateA);
+            }
+            return a.username().toLowerCase().compareTo(b.username().toLowerCase());
         });
         return sorted;
     }
