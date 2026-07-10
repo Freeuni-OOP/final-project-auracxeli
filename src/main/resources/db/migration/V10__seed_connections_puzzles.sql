@@ -1,14 +1,11 @@
--- Seed 7 consecutive days of Georgian-language Connections puzzles starting from the merge date.
--- Each puzzle has exactly 4 groups (difficulty 1-4), each group exactly 4 words.
-
 INSERT INTO connections_puzzles (puzzle_date, created_at) VALUES
+    (DATE_ADD(CURDATE(), INTERVAL -2 DAY), NOW()),
+    (DATE_ADD(CURDATE(), INTERVAL -1 DAY), NOW()),
     (DATE_ADD(CURDATE(), INTERVAL 0 DAY), NOW()),
     (DATE_ADD(CURDATE(), INTERVAL 1 DAY), NOW()),
     (DATE_ADD(CURDATE(), INTERVAL 2 DAY), NOW()),
     (DATE_ADD(CURDATE(), INTERVAL 3 DAY), NOW()),
-    (DATE_ADD(CURDATE(), INTERVAL 4 DAY), NOW()),
-    (DATE_ADD(CURDATE(), INTERVAL 5 DAY), NOW()),
-    (DATE_ADD(CURDATE(), INTERVAL 6 DAY), NOW());
+    (DATE_ADD(CURDATE(), INTERVAL 4 DAY), NOW());
 
 INSERT INTO connections_groups (puzzle_id, category, difficulty, created_at)
 SELECT p.id, g.category, g.difficulty, NOW()
@@ -48,7 +45,7 @@ JOIN (
     SELECT 6, 'გეომეტრია/ნახაზი', 2 UNION ALL
     SELECT 6, 'სხეულის დანამატები/ქსოვილები', 3 UNION ALL
     SELECT 6, 'სასვენი ნიშნები', 4
-) g ON p.puzzle_date = DATE_ADD(CURDATE(), INTERVAL g.day_offset DAY);
+) g ON p.puzzle_date = DATE_ADD(DATE_ADD(CURDATE(), INTERVAL g.day_offset DAY), INTERVAL -2 DAY);
 
 INSERT INTO connections_words (group_id, word)
 SELECT gr.id, w.word
@@ -173,4 +170,5 @@ JOIN (
     SELECT 6, 'სასვენი ნიშნები', 'ფრჩხილი' UNION ALL
     SELECT 6, 'სასვენი ნიშნები', 'ბრჭყალი' UNION ALL
     SELECT 6, 'სასვენი ნიშნები', 'წერტილი'
-) w ON p.puzzle_date = DATE_ADD(CURDATE(), INTERVAL w.day_offset DAY) AND gr.category = w.category;
+) w ON p.puzzle_date = DATE_ADD(DATE_ADD(CURDATE(), INTERVAL w.day_offset DAY), INTERVAL -2 DAY)
+    AND gr.category = w.category;
