@@ -56,16 +56,13 @@ public class WordleSession {
             createdAt = LocalDateTime.now();
         }
     }
-    /*
-    public Long getId()                  { return id; }
-    public User getUser()                { return user; }
-    public LocalDate getPuzzleDate()      { return puzzleDate; }
-    public WordleOutcome getOutcome()     { return outcome; }
-    public LocalDateTime getCreatedAt()   { return createdAt; }
-    public List<WordleGuess> getGuesses() { return guesses; }
 
 
-     */
+
+
+
+
+
     // not sure if the whole @setter is needed for 1 line
     public void setOutcome(WordleOutcome outcome) { this.outcome = outcome; }
 

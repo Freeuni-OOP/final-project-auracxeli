@@ -46,14 +46,11 @@ public class WordleGuess {
             createdAt = LocalDateTime.now();
         }
     }
-/*
 
 
-    public Long getId()                 { return id; }
-    public WordleSession getSession()   { return session; }
-    public String getGuessWord()        { return guessWord; }
-    public Short getGuessNumber()       { return guessNumber; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
 
- */
+
+
+
+
 }
