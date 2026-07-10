@@ -3,6 +3,7 @@ package com.auracxeli.admin;
 import com.auracxeli.admin.dto.ConnectionsGroupRequest;
 import com.auracxeli.admin.dto.CreateConnectionsPuzzleRequest;
 import com.auracxeli.admin.dto.ScheduledPuzzle;
+import com.auracxeli.connections.ConnectionsGroup;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzleRepository;
 import org.junit.jupiter.api.Test;
@@ -93,5 +94,22 @@ class AdminConnectionsServiceTest {
 
         adminConnectionsService.upcomingPuzzles();
         verify(connectionsPuzzleRepository).findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today);
+    }
+
+    @Test
+    void upcomingPuzzles_mapsEntitiesToScheduledPuzzleDtos() {
+        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        ConnectionsPuzzle puzzle = new ConnectionsPuzzle(today);
+        puzzle.getGroups().add(new ConnectionsGroup(puzzle, "ხილი", 2));
+        when(connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today))
+                .thenReturn(List.of(puzzle));
+
+        List<ScheduledPuzzle> result = adminConnectionsService.upcomingPuzzles();
+
+        assertEquals(1, result.size());
+        assertEquals(today, result.getFirst().puzzleDate());
+        assertEquals(1, result.getFirst().groups().size());
+        assertEquals("ხილი", result.getFirst().groups().getFirst().category());
+        assertEquals(2, result.getFirst().groups().getFirst().difficulty());
     }
 }

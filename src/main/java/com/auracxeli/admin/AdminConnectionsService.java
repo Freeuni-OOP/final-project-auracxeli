@@ -28,9 +28,12 @@ public class AdminConnectionsService {
     private final ConnectionsPuzzleRepository connectionsPuzzleRepository;
 
     // this method will return here the puzzles that are scheduled for today and after that too
-    public List<ConnectionsPuzzle> upcomingPuzzles() {
+    @Transactional(readOnly = true)
+    public List<ScheduledPuzzle> upcomingPuzzles() {
         LocalDate today = UtcDate.today();
-        return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today);
+        return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today).stream()
+                .map(AdminConnectionsService::toScheduledPuzzle)
+                .toList();
     }
 
     // here I create the puzzle for corresponding groups and their words
