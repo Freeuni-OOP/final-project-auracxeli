@@ -24,8 +24,7 @@ class WordleControllerTest extends AbstractIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    // Already seeded for today (CURDATE() + 0 days) by V3__seed_wordle_words.sql.
-    private static final String TARGET_WORD = "ბურთი";
+    private static final String TARGET_WORD = "წიგნი";
     private RequestPostProcessor asPlayerOne;
 
     @BeforeEach
