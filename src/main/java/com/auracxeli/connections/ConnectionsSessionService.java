@@ -1,8 +1,10 @@
 package com.auracxeli.connections;
 
+import com.auracxeli.achievement.GameFinishedEvent;
 import com.auracxeli.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class ConnectionsSessionService {
 
     private final ConnectionsSessionRepository connectionsSessionRepository;
     private final ConnectionsGuessEvaluator connectionsGuessEvaluator;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Find today's session for the user. if it cant find it creates one on their first visit today.
@@ -82,6 +85,7 @@ public class ConnectionsSessionService {
         if (saved.getOutcome() != ConnectionsOutcome.IN_PROGRESS) {
             log.info("User {} finished Connections game {} outcome={} mistakes={}",
                     saved.getUser().getId(), saved.getId(), saved.getOutcome(), saved.getMistakesCount());
+            eventPublisher.publishEvent(new GameFinishedEvent(saved.getUser().getId()));
         }
         return saved;
     }

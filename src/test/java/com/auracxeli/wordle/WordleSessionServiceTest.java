@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -24,6 +25,8 @@ class WordleSessionServiceTest {
     private WordleDailyService wordleDailyService;
     @Mock
     private WordleGuessValidator wordleGuessValidator;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
     private WordleSessionService wordleSessionService;
 
     private final WordleGuessEvaluator evaluator = new WordleGuessEvaluator();
@@ -33,7 +36,7 @@ class WordleSessionServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         wordleSessionService = new WordleSessionService(wordleSessionRepository, wordleDailyService, evaluator,
-                wordleGuessValidator);
+                wordleGuessValidator, eventPublisher);
         lenient().when(wordleGuessValidator.isValid(any())).thenReturn(true);
         user = userWithId(1L);
         todaysWord = new WordleWord("ვარდი", LocalDate.now(), null);
