@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>გვერდი ვერ მოიძებნა</title>
+    <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet"/>
+    <link th:href="@{/css/error.css}" href="/static/css/error.css" rel="stylesheet"/>
+</head>
+<body>
+<main class="error-page">
+    <img th:src="@{/images/logo.png}" src="/static/images/logo.png" alt="Auracxeli" class="error-logo"/>
+    <h1 class="error-code">404</h1>
+    <p class="error-title">გვერდი ვერ მოიძებნა</p>
+    <p class="error-message">ეს გვერდი არ არსებობს.</p>
+    <a th:href="@{/}" href="/" class="error-home">მთავარ გვერდზე</a>
+</main>
+</body>
+</html>
