@@ -1,5 +1,6 @@
 package com.auracxeli.user;
 
+import com.auracxeli.connections.ConnectionsSessionRepository;
 import com.auracxeli.user.dto.GuessBucket;
 import com.auracxeli.user.dto.WordleHistoryItem;
 import com.auracxeli.user.dto.WordleStatsDto;
@@ -19,6 +20,7 @@ import static com.auracxeli.wordle.WordleOutcome.IN_PROGRESS;
 import static com.auracxeli.wordle.WordleOutcome.LOST;
 import static com.auracxeli.wordle.WordleOutcome.WON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +30,7 @@ class UserStatsServiceTest {
     private static final LocalDate TODAY = LocalDate.of(2026, 6, 23);
 
     @Mock private WordleSessionRepository sessionRepository;
+    @Mock private ConnectionsSessionRepository connectionsSessionRepository;
     @InjectMocks private UserStatsService userStatsService;
 
 
@@ -174,6 +177,49 @@ class UserStatsServiceTest {
         assertThat(history.get(1).puzzleDate()).isEqualTo(TODAY.minusDays(1));
         assertThat(history.get(1).result()).isEqualTo("წაგებული");
         assertThat(history.get(1).attemptsUsed()).isEqualTo(6);
+    }
+
+    @Test
+    void calculateLevel_zeroGamesIsLevelOne() {
+        assertThat(UserStatsService.calculateLevel(0))
+                .isEqualTo(new com.auracxeli.user.dto.LevelDto(1, 5, 0));
+    }
+
+    @Test
+    void calculateLevel_midwayThroughLevelOne() {
+        assertThat(UserStatsService.calculateLevel(3))
+                .isEqualTo(new com.auracxeli.user.dto.LevelDto(1, 2, 60));
+    }
+
+    @Test
+    void calculateLevel_exactlyAtLevelUpBoundary() {
+        assertThat(UserStatsService.calculateLevel(5))
+                .isEqualTo(new com.auracxeli.user.dto.LevelDto(2, 5, 0));
+    }
+
+    @Test
+    void calculateLevel_higherLevelThreshold() {
+        assertThat(UserStatsService.calculateLevel(27))
+                .isEqualTo(new com.auracxeli.user.dto.LevelDto(6, 3, 40));
+    }
+
+    @Test
+    void calculateLevel_rejectsNegativeInput() {
+        assertThatThrownBy(() -> UserStatsService.calculateLevel(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void getLevelInfo_sumsFinishedGamesAcrossBothGames() {
+        when(sessionRepository.countByUserIdAndOutcomeNot(USER_ID, IN_PROGRESS)).thenReturn(3L);
+        when(connectionsSessionRepository.countByUserIdAndOutcomeNot(USER_ID, com.auracxeli.connections.ConnectionsOutcome.IN_PROGRESS))
+                .thenReturn(2L);
+
+        var result = userStatsService.getLevelInfo(USER_ID);
+
+        assertThat(result.level()).isEqualTo(2);
+        assertThat(result.gamesRemaining()).isEqualTo(5);
+        assertThat(result.percentComplete()).isZero();
     }
 
 

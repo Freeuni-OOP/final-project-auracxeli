@@ -18,6 +18,10 @@
             <div class="nav-dropdown-menu">
                 <a class="nav-dropdown-item" th:href="@{/archive/wordle}">Wordle</a>
                 <a class="nav-dropdown-item" th:href="@{/archive/connections}">Connections</a>
+        <div class="level-badge" sec:authorize="isAuthenticated()" th:if="${levelInfo != null}">
+            <span class="level-badge-label" th:text="|Lv. ${levelInfo.level}|">Lv. 1</span>
+            <div class="level-badge-track">
+                <div class="level-badge-fill" th:style="'width:' + ${levelInfo.percentComplete} + '%'"></div>
             </div>
         </div>
         <a class="nav-link"
