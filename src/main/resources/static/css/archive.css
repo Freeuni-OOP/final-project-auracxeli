@@ -1,0 +1,42 @@
+.archive { padding: 44px 0 60px; }
+.archive-title {
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 800;
+}
+.archive-sub {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 15px;
+}
+.archive-empty {
+    margin-top: 28px;
+    color: var(--muted);
+}
+.archive-grid {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+.archive-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    transition: border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+.archive-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.archive-card:active {
+    transform: translateY(1px);
+}

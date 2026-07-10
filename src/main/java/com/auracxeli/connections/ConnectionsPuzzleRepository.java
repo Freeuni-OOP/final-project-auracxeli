@@ -13,4 +13,7 @@ public interface ConnectionsPuzzleRepository extends JpaRepository<ConnectionsPu
     boolean existsByPuzzleDate(LocalDate puzzleDate);
 
     List<ConnectionsPuzzle> findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(LocalDate puzzleDate);
+
+    // Archive: strictly-past puzzles (today stays the once-only daily), newest first.
+    List<ConnectionsPuzzle> findByPuzzleDateLessThanOrderByPuzzleDateDesc(LocalDate puzzleDate);
 }

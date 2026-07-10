@@ -20,6 +20,11 @@
         </div>
 
         <div th:unless="${noPuzzle}">
+            <div th:if="${practiceDate != null}" class="practice-bar">
+                <a th:href="@{/archive/connections}">← არქივი</a>
+                <span class="practice-date" th:text="${practiceDate}"></span>
+                <a th:href="@{/archive/connections/{d}/restart(d=${practiceDate})}">თავიდან</a>
+            </div>
             <p th:if="${error}" class="connections-error" th:text="${error}"></p>
 
             <p th:if="${board.outcome().name() == 'WON'}" class="connections-message win">
@@ -49,7 +54,8 @@
 
             <!-- Remaining word grid + guess form -->
             <form th:unless="${board.readOnly()}" id="guess-form" class="connections-grid"
-                  th:action="@{/connections/guess}" method="post" novalidate>
+                  th:action="${practiceDate != null} ? @{/archive/connections/{d}/guess(d=${practiceDate})} : @{/connections/guess}"
+                  method="post" novalidate>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <label class="connections-tile" th:each="word : ${board.remainingWords()}">
                     <input type="checkbox" name="words" th:value="${word}" class="connections-tile-checkbox"/>
