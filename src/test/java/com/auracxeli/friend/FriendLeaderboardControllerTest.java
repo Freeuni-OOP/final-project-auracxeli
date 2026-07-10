@@ -35,7 +35,8 @@ class FriendLeaderboardControllerTest {
     @MockitoBean
     private UserStatsService userStatsService;
 
-
+    @MockitoBean
+    private UserRepository userRepository;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
