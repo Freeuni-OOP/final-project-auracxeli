@@ -1,6 +1,7 @@
 package com.auracxeli.connections;
 
 import com.auracxeli.user.User;
+import com.auracxeli.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ class ConnectionsSessionServiceTest {
     @Mock private ConnectionsSessionRepository connectionsSessionRepository;
     @Mock private ConnectionsGuessEvaluator connectionsGuessEvaluator;
     @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private UserRepository userRepository;
     @InjectMocks private ConnectionsSessionService service;
 
     private User user;
@@ -67,7 +69,7 @@ class ConnectionsSessionServiceTest {
         when(connectionsSessionRepository.findByPuzzleDateAndUserId(any(), any()))
                 .thenReturn(Optional.of(existing));
 
-        ConnectionsSession result = service.getOrCreateTodaysSession(user);
+        ConnectionsSession result = service.getOrCreateTodaysSession(1L);
 
         assertSame(existing, result);
         verify(connectionsSessionRepository, never()).save(any());
@@ -77,8 +79,9 @@ class ConnectionsSessionServiceTest {
     void getOrCreateCreatesNewSessionWhenNoneTest() {
         when(connectionsSessionRepository.findByPuzzleDateAndUserId(any(), any()))
                 .thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        ConnectionsSession result = service.getOrCreateTodaysSession(user);
+        ConnectionsSession result = service.getOrCreateTodaysSession(1L);
 
         assertEquals(ConnectionsOutcome.IN_PROGRESS, result.getOutcome());
         verify(connectionsSessionRepository).save(any(ConnectionsSession.class));
