@@ -1,11 +1,9 @@
 package com.auracxeli.wordle;
 
-import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
-import com.auracxeli.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,60 +13,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-
-
 public class WordleController {
-
-    private static final int BOARD_ROWS = 6;
 
     private final WordleSessionService wordleSessionService;
     private final WordleDailyService wordleDailyService;
-    private final WordleGuessEvaluator wordleGuessEvaluator;
-    private final UserRepository userRepository;
-
+    private final WordleBoardService wordleBoardService;
 
     @GetMapping("/wordle")
-    public String showBoard(Authentication authentication, Model model) {
-        Optional<WordleWord> todaysWord = wordleDailyService.getTodaysWord();
+    public String showBoard(@AuthenticationPrincipal UserDetailsImpl principal, Model model) {
+        Optional<WordleWord> todaysWord = requireTodaysWord(model);
         if (todaysWord.isEmpty()) {
-            log.warn("No daily puzzle scheduled for {}", LocalDate.now(ZoneOffset.UTC));
-            model.addAttribute("noPuzzle", true);
             return "wordle";
         }
 
-        User user = currentUser(authentication);
-        WordleSession session = wordleSessionService.getOrCreateTodaysSession(user);
-        populateBoardModel(model, session, todaysWord.get());
+        WordleSession session = wordleSessionService.getOrCreateTodaysSession(principal.getId());
+        populateModel(model, wordleBoardService.buildBoard(session, todaysWord.get()));
         return "wordle";
     }
 
     @PostMapping("/wordle/guess")
-    public String submitGuess(Authentication authentication,
-                               @RequestParam(required = false, defaultValue = "") String guess,
-                               Model model) {
-        Optional<WordleWord> todaysWord = wordleDailyService.getTodaysWord();
+    public String submitGuess(@AuthenticationPrincipal UserDetailsImpl principal,
+                              @RequestParam(required = false, defaultValue = "") String guess,
+                              Model model) {
+        Optional<WordleWord> todaysWord = requireTodaysWord(model);
         if (todaysWord.isEmpty()) {
-            log.warn("No daily puzzle scheduled for {}", LocalDate.now(ZoneOffset.UTC));
-            model.addAttribute("noPuzzle", true);
             return "wordle";
         }
 
-        User user = currentUser(authentication);
-        WordleSession session = wordleSessionService.getOrCreateTodaysSession(user);
+        WordleSession session = wordleSessionService.getOrCreateTodaysSession(principal.getId());
         try {
             wordleSessionService.submitGuess(session, todaysWord.get(), guess);
         } catch (WordleSessionService.InvalidGuessException | WordleSessionService.AlreadyCompletedException
                  | InvalidGeorgianWordException e) {
-            log.warn("Rejected guess for user {} session {}: {}", user.getId(), session.getId(), e.getMessage());
-            populateBoardModel(model, session, todaysWord.get());
+            log.warn("Rejected guess for user {} session {}: {}", principal.getId(), session.getId(), e.getMessage());
+            populateModel(model, wordleBoardService.buildBoard(session, todaysWord.get()));
             model.addAttribute("error", e.getMessage());
             return "wordle";
         }
@@ -82,68 +65,31 @@ public class WordleController {
      * exception with its stack trace and renders the board view with a generic error.
      */
     @ExceptionHandler(Exception.class)
-    public String handleUnexpected(Exception ex, Authentication authentication, Model model) {
-        Long userId = authentication != null && authentication.getPrincipal() instanceof UserDetailsImpl principal
-                ? principal.getId()
-                : null;
+    public String handleUnexpected(Exception ex, @AuthenticationPrincipal UserDetailsImpl principal, Model model) {
+        Long userId = principal != null ? principal.getId() : null;
         log.error("Unexpected error handling Wordle request for user {}", userId, ex);
         model.addAttribute("error", "მოულოდნელი შეცდომა, სცადეთ მოგვიანებით");
         return "wordle";
     }
 
-    private User currentUser(Authentication authentication) {
-        Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + userId));
+    /** Resolves today's word, flagging the "no puzzle scheduled" state on the model when absent. */
+    private Optional<WordleWord> requireTodaysWord(Model model) {
+        Optional<WordleWord> todaysWord = wordleDailyService.getTodaysWord();
+        if (todaysWord.isEmpty()) {
+            log.warn("No daily puzzle scheduled for {}", LocalDate.now(ZoneOffset.UTC));
+            model.addAttribute("noPuzzle", true);
+        }
+        return todaysWord;
     }
 
-    private void populateBoardModel(Model model, WordleSession session, WordleWord todaysWord) {
-        List<List<Tile>> rows = new ArrayList<>();
-        for (WordleGuess guess : session.getGuesses()) {
-            List<LetterFeedback> feedback = wordleGuessEvaluator.evaluateGuess(guess.getGuessWord(), todaysWord.getWord());
-            rows.add(toTiles(guess.getGuessWord(), feedback));
+    private void populateModel(Model model, WordleBoardView board) {
+        model.addAttribute("rows", board.rows());
+        model.addAttribute("outcome", board.outcome());
+        model.addAttribute("readOnly", board.readOnly());
+        model.addAttribute("attemptsUsed", board.attemptsUsed());
+        model.addAttribute("maxAttempts", board.maxAttempts());
+        if (board.revealedWord() != null) {
+            model.addAttribute("revealedWord", board.revealedWord());
         }
-        while (rows.size() < BOARD_ROWS) {
-            rows.add(blankRow());
-        }
-
-        boolean readOnly = session.getOutcome() != WordleOutcome.IN_PROGRESS;
-
-        model.addAttribute("rows", rows);
-        model.addAttribute("outcome", session.getOutcome());
-        model.addAttribute("readOnly", readOnly);
-        model.addAttribute("attemptsUsed", session.getGuesses().size());
-        model.addAttribute("maxAttempts", BOARD_ROWS);
-        if (session.getOutcome() == WordleOutcome.LOST) {
-            model.addAttribute("revealedWord", todaysWord.getWord());
-        }
-    }
-
-    private List<Tile> toTiles(String word, List<LetterFeedback> feedback) {
-        List<Tile> tiles = new ArrayList<>();
-        String upper = word.toUpperCase(Locale.ROOT);
-        for (int i = 0; i < feedback.size(); i++) {
-            tiles.add(new Tile(String.valueOf(upper.charAt(i)), cssClassFor(feedback.get(i))));
-        }
-        return tiles;
-    }
-
-    private List<Tile> blankRow() {
-        List<Tile> tiles = new ArrayList<>();
-        for (int i = 0; i < WordleGuessEvaluator.WORD_LENGTH; i++) {
-            tiles.add(new Tile("", "t"));
-        }
-        return tiles;
-    }
-
-    private String cssClassFor(LetterFeedback feedback) {
-        return switch (feedback) {
-            case CORRECT -> "t g";
-            case PRESENT -> "t y";
-            case ABSENT -> "t x";
-        };
-    }
-
-    public record Tile(String letter, String cssClass) {
     }
 }
