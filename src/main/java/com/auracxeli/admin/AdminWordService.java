@@ -29,7 +29,7 @@ public class AdminWordService {
     private final WordleGuessValidator wordleGuessValidator;
 
     /** Words scheduled for the next {@value #UPCOMING_DAYS} days, earliest first. */
-    public List<WordleWord> upcomingWords() {
+    public List<ScheduledWord> upcomingWords() {
         LocalDate today = UtcDate.today();
         return wordleWordRepository.findByScheduledDateBetweenOrderByScheduledDate(
                         today, today.plusDays(UPCOMING_DAYS - 1)).stream()
