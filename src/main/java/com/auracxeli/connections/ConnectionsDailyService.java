@@ -1,11 +1,11 @@
 package com.auracxeli.connections;
 
+import com.auracxeli.config.UtcDate;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 @Slf4j
@@ -16,7 +16,7 @@ public class ConnectionsDailyService {
     private final ConnectionsPuzzleRepository connectionsPuzzleRepository;
     // it returns the scheduled puzzle for today if there is no puzzle scheduled I return empty
     public Optional<ConnectionsPuzzle> getTodaysPuzzle() {
-        return getPuzzleForDate(LocalDate.now(ZoneOffset.UTC));
+        return getPuzzleForDate(UtcDate.today());
     }
 
     /**

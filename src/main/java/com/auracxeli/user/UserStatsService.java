@@ -9,11 +9,11 @@ import com.auracxeli.wordle.WordleSessionRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.auracxeli.config.UtcDate;
 import com.auracxeli.connections.ConnectionsOutcome;
 import com.auracxeli.connections.ConnectionsSessionRepository;
 import com.auracxeli.user.dto.LevelDto;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ public class UserStatsService {
     private final ConnectionsSessionRepository connectionsSessionRepository;
     public WordleStatsDto getWordleStats(Long userId) {
         //we made puzzle dates UTC so i will use UTC here too.
-        return getWordleStats(userId, LocalDate.now(ZoneOffset.UTC));
+        return getWordleStats(userId, UtcDate.today());
     }
 
     WordleStatsDto getWordleStats(Long userId, LocalDate today) {

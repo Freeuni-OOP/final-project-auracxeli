@@ -4,6 +4,7 @@ import com.auracxeli.admin.dto.ConnectionsGroupRequest;
 import com.auracxeli.admin.dto.CreateConnectionsPuzzleRequest;
 import com.auracxeli.admin.dto.ScheduledGroup;
 import com.auracxeli.admin.dto.ScheduledPuzzle;
+import com.auracxeli.config.UtcDate;
 import com.auracxeli.connections.ConnectionsGroup;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzleRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Slf4j
@@ -28,12 +28,9 @@ public class AdminConnectionsService {
     private final ConnectionsPuzzleRepository connectionsPuzzleRepository;
 
     // this method will return here the puzzles that are scheduled for today and after that too
-    @Transactional(readOnly = true)
-    public List<ScheduledPuzzle> upcomingPuzzles() {
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today).stream()
-                .map(AdminConnectionsService::toScheduledPuzzle)
-                .toList();
+    public List<ConnectionsPuzzle> upcomingPuzzles() {
+        LocalDate today = UtcDate.today();
+        return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today);
     }
 
     // here I create the puzzle for corresponding groups and their words
