@@ -23,4 +23,7 @@ public interface ConnectionsSessionRepository extends JpaRepository<ConnectionsS
             ORDER BY s.puzzleDate DESC
             """)
     List<ConnectionsSession> findByUserIdOrderByPuzzleDateDesc(@Param("userId") Long userId);
+
+     // Count of the user's finished games (anything except IN_PROGRESS)
+    long countByUserIdAndOutcomeNot(Long userId, ConnectionsOutcome outcome);
 }
