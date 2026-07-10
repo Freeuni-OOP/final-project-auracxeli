@@ -112,6 +112,7 @@ main { flex: 1; }
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+}
 .theme-form { display: flex; }
 .theme-toggle {
     background: none;
