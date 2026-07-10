@@ -2,6 +2,7 @@ package com.auracxeli.admin;
 
 import com.auracxeli.admin.dto.ConnectionsGroupRequest;
 import com.auracxeli.admin.dto.CreateConnectionsPuzzleRequest;
+import com.auracxeli.admin.dto.ScheduledPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzleRepository;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class AdminConnectionsServiceTest {
         when(connectionsPuzzleRepository.existsByPuzzleDate(date)).thenReturn(false);
         when(connectionsPuzzleRepository.save(any(ConnectionsPuzzle.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        ConnectionsPuzzle result = adminConnectionsService.createPuzzle(validRequest());
+        ScheduledPuzzle result = adminConnectionsService.createPuzzle(validRequest());
 
         ArgumentCaptor<ConnectionsPuzzle> captor = ArgumentCaptor.forClass(ConnectionsPuzzle.class);
         verify(connectionsPuzzleRepository).save(captor.capture());
@@ -59,7 +60,8 @@ class AdminConnectionsServiceTest {
         assertEquals(date, saved.getPuzzleDate());
         assertEquals(4, saved.getGroups().size());
         saved.getGroups().forEach(g -> assertEquals(4, g.getWords().size()));
-        assertEquals(date, result.getPuzzleDate());
+        assertEquals(date, result.puzzleDate());
+        assertEquals(4, result.groups().size());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.admin.dto.UserRow;
 import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.user.*;
 import org.junit.jupiter.api.Test;
@@ -51,8 +52,8 @@ class AdminUserControllerTest {
     @Test
     void getUsersAdminShowsUsersTest() throws Exception {
         when(adminUserService.listUsers("")).thenReturn(List.of(
-                user(1L, "admin", Role.ADMIN, true),
-                user(2L, "gio", Role.USER, true)
+                row(1L, "admin", Role.ADMIN, true),
+                row(2L, "gio", Role.USER, true)
         ));
 
         mockMvc.perform(get("/admin/users").with(authentication(adminAuth())))
@@ -65,7 +66,7 @@ class AdminUserControllerTest {
     @Test
     void getUsersWithQuerySearchesUsersTest() throws Exception {
         when(adminUserService.listUsers("gio")).thenReturn(List.of(
-                user(2L, "gio", Role.USER, true)
+                row(2L, "gio", Role.USER, true)
         ));
 
         mockMvc.perform(get("/admin/users")
@@ -86,8 +87,7 @@ class AdminUserControllerTest {
 
     @Test
     void toggleActiveValidTargetCallsServiceAndRedirectsTest() throws Exception {
-        User target = user(2L, "gio", Role.USER, false);
-        when(adminUserService.toggleActive(2L, 1L)).thenReturn(target);
+        when(adminUserService.toggleActive(2L, 1L)).thenReturn(row(2L, "gio", Role.USER, false));
 
         mockMvc.perform(post("/admin/users/2/toggle-active")
                         .with(authentication(adminAuth()))
@@ -101,8 +101,7 @@ class AdminUserControllerTest {
 
     @Test
     void toggleActiveKeepsSearchQueryTest() throws Exception {
-        User target = user(2L, "gio", Role.USER, true);
-        when(adminUserService.toggleActive(2L, 1L)).thenReturn(target);
+        when(adminUserService.toggleActive(2L, 1L)).thenReturn(row(2L, "gio", Role.USER, true));
 
         mockMvc.perform(post("/admin/users/2/toggle-active")
                         .param("q", "gio")
@@ -151,5 +150,9 @@ class AdminUserControllerTest {
         user.setRole(role);
         user.setActive(active);
         return user;
+    }
+
+    private UserRow row(Long id, String username, Role role, boolean active) {
+        return new UserRow(id, username, username + "@example.com", role, active);
     }
 }
