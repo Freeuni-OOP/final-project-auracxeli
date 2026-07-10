@@ -1,0 +1,43 @@
+.error-page {
+    flex: 1;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding: 48px 20px;
+}
+.error-logo {
+    height: 88px;
+    margin-bottom: 8px;
+}
+.error-code {
+    font-size: clamp(52px, 12vw, 92px);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+}
+.error-title {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 800;
+}
+.error-message {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 420px;
+}
+.error-home {
+    margin-top: 12px;
+    display: inline-block;
+    padding: 12px 26px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.error-home:hover {
+    filter: brightness(0.95);
+}
