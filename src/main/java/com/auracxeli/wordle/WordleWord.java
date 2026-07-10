@@ -51,15 +51,12 @@ public class WordleWord {
         }
     }
 
- /*   public Long getId()                 { return id; }
-    public String getWord()             { return word; }
-    public LocalDate getScheduledDate() { return scheduledDate; }
-    public Long getAddedBy()            { return addedBy; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public void setWord(String word)                      { this.word = word; }
-    public void setScheduledDate(LocalDate scheduledDate) { this.scheduledDate = scheduledDate; }
-    public void setAddedBy(Long addedBy)                  { this.addedBy = addedBy; }
 
-  */
+
+
+
+
+
+
 }
