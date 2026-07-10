@@ -1,0 +1,25 @@
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 16px;
+}
+.avatar-option {
+    display: contents;
+}
+.avatar-btn {
+    border: 2px solid transparent;
+    border-radius: 50%;
+    padding: 4px;
+    background: none;
+    cursor: pointer;
+}
+.avatar-btn img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+.avatar-btn.selected {
+    border-color: var(--accent);
+}

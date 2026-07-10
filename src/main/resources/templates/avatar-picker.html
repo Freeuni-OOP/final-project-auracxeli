@@ -6,33 +6,10 @@
     <title>ავატარის არჩევა</title>
     <link th:href="@{/css/styles.css}" href="/static/css/styles.css" rel="stylesheet" />
     <link th:href="@{/css/auth.css}"   href="/static/css/auth.css"   rel="stylesheet" />
-    <style>
-        .avatar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 16px;
-        }
-        .avatar-option {
-            display: contents;
-        }
-        .avatar-btn {
-            border: 2px solid transparent;
-            border-radius: 50%;
-            padding: 4px;
-            background: none;
-            cursor: pointer;
-        }
-        .avatar-btn img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            display: block;
-        }
-        .avatar-btn.selected {
-            border-color: var(--accent);
-        }
-    </style>
+    <link th:href="@{/css/avatar-picker.css}" href="/static/css/avatar-picker.css" rel="stylesheet" />
+
+
+
 </head>
 <body>
 <header class="site-header">
