@@ -9,12 +9,7 @@
 </head>
 <body>
 <header class="site-header">
-    <div class="container">
-        <a class="brand" th:href="@{/}">მთავარი</a>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">გასვლა</button>
-        </form>
-    </div>
+    <nav th:replace="~{fragments/navbar :: navbar('')}"></nav>
 </header>
 <main>
     <section class="hero container">
