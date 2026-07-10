@@ -91,6 +91,18 @@ class WordleSessionServiceTest {
     }
 
     @Test
+    void getOrCreateTodaysSession_throws_whenUserNoLongerExists() {
+        when(wordleSessionRepository.findByUserIdAndPuzzleDate(eq(1L), any()))
+                .thenReturn(Optional.empty());
+        when(wordleDailyService.getTodaysWord()).thenReturn(Optional.of(todaysWord));
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class,
+                () -> wordleSessionService.getOrCreateTodaysSession(1L));
+        verify(wordleSessionRepository, never()).save(any());
+    }
+
+    @Test
     void submitGuess_correctGuess_marksSessionWon() {
         WordleSession session = new WordleSession(user, LocalDate.now());
         when(wordleSessionRepository.save(any(WordleSession.class))).thenAnswer(inv -> inv.getArgument(0));

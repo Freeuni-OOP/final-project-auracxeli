@@ -88,6 +88,17 @@ class ConnectionsSessionServiceTest {
     }
 
     @Test
+    void getOrCreateThrowsWhenUserNoLongerExistsTest() {
+        when(connectionsSessionRepository.findByPuzzleDateAndUserId(any(), any()))
+                .thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class,
+                () -> service.getOrCreateTodaysSession(1L));
+        verify(connectionsSessionRepository, never()).save(any());
+    }
+
+    @Test
     void correctGuessMarksGroupFoundTest() {
         ConnectionsSession session = newSession();
         ConnectionsPuzzle puzzle = puzzleWithFourGroups();
