@@ -12,12 +12,6 @@
             <img th:src="@{'/images/avatars/' + ${#authentication.principal.avatar}}"
                  class="nav-avatar" alt="avatar" />
         </a>
-        <div class="level-badge" sec:authorize="isAuthenticated()" th:if="${levelInfo != null}">
-            <span class="level-badge-label" th:text="|Lv. ${levelInfo.level}|">Lv. 1</span>
-            <div class="level-badge-track">
-                <div class="level-badge-fill" th:style="'width:' + ${levelInfo.percentComplete} + '%'"></div>
-            </div>
-        </div>
         <div class="nav-dropdown" sec:authorize="isAuthenticated()">
             <span class="nav-link nav-dropdown-toggle"
                   th:classappend="${activePage == 'archive'} ? 'active' : ''">არქივი ▾</span>
