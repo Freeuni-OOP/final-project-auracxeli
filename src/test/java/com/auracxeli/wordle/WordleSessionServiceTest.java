@@ -1,6 +1,7 @@
 package com.auracxeli.wordle;
 
 import com.auracxeli.user.User;
+import com.auracxeli.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +28,8 @@ class WordleSessionServiceTest {
     private WordleGuessValidator wordleGuessValidator;
     @Mock
     private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private UserRepository userRepository;
     private WordleSessionService wordleSessionService;
 
     private final WordleGuessEvaluator evaluator = new WordleGuessEvaluator();
@@ -36,7 +39,7 @@ class WordleSessionServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         wordleSessionService = new WordleSessionService(wordleSessionRepository, wordleDailyService, evaluator,
-                wordleGuessValidator, eventPublisher);
+                wordleGuessValidator, eventPublisher, userRepository);
         lenient().when(wordleGuessValidator.isValid(any())).thenReturn(true);
         user = userWithId(1L);
         todaysWord = new WordleWord("ვარდი", LocalDate.now(), null);
@@ -56,7 +59,7 @@ class WordleSessionServiceTest {
         when(wordleSessionRepository.findByUserIdAndPuzzleDate(eq(1L), any()))
                 .thenReturn(Optional.of(existing));
 
-        WordleSession result = wordleSessionService.getOrCreateTodaysSession(user);
+        WordleSession result = wordleSessionService.getOrCreateTodaysSession(1L);
 
         assertSame(existing, result);
         verify(wordleSessionRepository, never()).save(any());
@@ -67,9 +70,10 @@ class WordleSessionServiceTest {
         when(wordleSessionRepository.findByUserIdAndPuzzleDate(eq(1L), any()))
                 .thenReturn(Optional.empty());
         when(wordleDailyService.getTodaysWord()).thenReturn(Optional.of(todaysWord));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(wordleSessionRepository.save(any(WordleSession.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        WordleSession result = wordleSessionService.getOrCreateTodaysSession(user);
+        WordleSession result = wordleSessionService.getOrCreateTodaysSession(1L);
 
         assertEquals(user, result.getUser());
         verify(wordleSessionRepository).save(any(WordleSession.class));
@@ -82,7 +86,7 @@ class WordleSessionServiceTest {
         when(wordleDailyService.getTodaysWord()).thenReturn(Optional.empty());
 
         assertThrows(WordleSessionService.NoDailyWordException.class,
-                () -> wordleSessionService.getOrCreateTodaysSession(user));
+                () -> wordleSessionService.getOrCreateTodaysSession(1L));
         verify(wordleSessionRepository, never()).save(any());
     }
 
