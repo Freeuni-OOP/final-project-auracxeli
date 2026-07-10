@@ -1,18 +1,27 @@
 package com.auracxeli.connections;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-// here is the group for 4 words that have 4 dificulty levels,they will have each their color but I will do that in frontend part
-
+// A group of 4 words at one difficulty level; the per-difficulty color is applied in the frontend.
 @Getter
 @Entity
 @Table(name = "connections_groups")
-
 public class ConnectionsGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
