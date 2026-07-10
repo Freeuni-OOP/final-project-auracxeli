@@ -10,13 +10,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -48,9 +51,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "theme_preference", nullable = false, length = 10)
     private Theme themePreference = Theme.LIGHT;
-
-    protected User() {
-    }
 
     public User(String username, String email, String password) {
         this.username = username;

@@ -12,7 +12,9 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  *  I mirror each guess of a user per session here, also each guess number is unique
@@ -20,6 +22,7 @@ import lombok.Getter;
 @Entity
 @Table(name = "wordle_guesses")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WordleGuess {
 
     @Id
@@ -38,8 +41,6 @@ public class WordleGuess {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    protected WordleGuess() {}
 
     public WordleGuess(WordleSession session, String guessWord, int guessNumber) {
         this.session = session;

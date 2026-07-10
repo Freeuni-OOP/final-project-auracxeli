@@ -2,7 +2,9 @@ package com.auracxeli.achievement;
 
 import com.auracxeli.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "user_achievements",
         uniqueConstraints = @UniqueConstraint(name = "uk_user_achievement",
                 columnNames = {"user_id", "achievement_key"}))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserAchievement {
 
     @Id
@@ -27,8 +30,6 @@ public class UserAchievement {
 
     @Column(name = "earned_at", nullable = false)
     private LocalDateTime earnedAt;
-
-    protected UserAchievement() {}
 
     public UserAchievement(User user, Achievement achievement) {
         this.user = user;

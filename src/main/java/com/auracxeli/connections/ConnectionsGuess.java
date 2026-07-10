@@ -10,13 +10,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @Table(name = "connections_guesses")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConnectionsGuess {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +44,6 @@ public class ConnectionsGuess {
     private Short guessNumber;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    protected ConnectionsGuess() {}
 
     public ConnectionsGuess(ConnectionsSession session, String word1, String word2, String word3, String word4,
                             boolean correct, int guessNumber) {

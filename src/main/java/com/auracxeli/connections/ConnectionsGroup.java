@@ -12,7 +12,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "connections_groups")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConnectionsGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,9 +44,6 @@ public class ConnectionsGroup {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConnectionsWord> words = new ArrayList<>();
 
-    protected ConnectionsGroup() {}
-
-    // I wanted to use here the requiredargsconstructor but we dont have final arguments
     public ConnectionsGroup(ConnectionsPuzzle puzzle, String category, int difficulty) {
         this.puzzle = puzzle;
         this.category = category;

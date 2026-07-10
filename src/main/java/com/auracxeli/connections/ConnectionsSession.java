@@ -15,7 +15,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -27,6 +29,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "connections_sessions")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConnectionsSession {
 
     @Id
@@ -51,7 +54,6 @@ public class ConnectionsSession {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConnectionsGuess> guesses = new ArrayList<>();
 
-    protected ConnectionsSession() {}
     public ConnectionsSession(User user, LocalDate puzzleDate) {
         this.user = user;
         this.puzzleDate = puzzleDate;
