@@ -1,9 +1,9 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.admin.dto.ScheduledWord;
 import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.user.*;
 import com.auracxeli.wordle.InvalidGeorgianWordException;
-import com.auracxeli.wordle.WordleWord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -84,7 +84,7 @@ class AdminWordControllerTest {
     @Test
     void postWord_validSubmit_savesAndRedirects() throws Exception {
         when(adminWordService.addWord(eq("ბურთი"), any(), any()))
-                .thenReturn(new WordleWord("ბურთი", LocalDate.now(ZoneOffset.UTC), null));
+                .thenReturn(new ScheduledWord(1L, "ბურთი", LocalDate.now(ZoneOffset.UTC)));
 
         mockMvc.perform(post("/admin/words")
                         .with(authentication(adminAuth()))

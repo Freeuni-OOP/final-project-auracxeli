@@ -2,6 +2,8 @@ package com.auracxeli.admin;
 
 import com.auracxeli.admin.dto.ConnectionsGroupRequest;
 import com.auracxeli.admin.dto.CreateConnectionsPuzzleRequest;
+import com.auracxeli.admin.dto.ScheduledPuzzle;
+import com.auracxeli.connections.ConnectionsGroup;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzleRepository;
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,7 @@ class AdminConnectionsServiceTest {
         when(connectionsPuzzleRepository.existsByPuzzleDate(date)).thenReturn(false);
         when(connectionsPuzzleRepository.save(any(ConnectionsPuzzle.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        ConnectionsPuzzle result = adminConnectionsService.createPuzzle(validRequest());
+        ScheduledPuzzle result = adminConnectionsService.createPuzzle(validRequest());
 
         ArgumentCaptor<ConnectionsPuzzle> captor = ArgumentCaptor.forClass(ConnectionsPuzzle.class);
         verify(connectionsPuzzleRepository).save(captor.capture());
@@ -59,7 +61,8 @@ class AdminConnectionsServiceTest {
         assertEquals(date, saved.getPuzzleDate());
         assertEquals(4, saved.getGroups().size());
         saved.getGroups().forEach(g -> assertEquals(4, g.getWords().size()));
-        assertEquals(date, result.getPuzzleDate());
+        assertEquals(date, result.puzzleDate());
+        assertEquals(4, result.groups().size());
     }
 
     @Test
@@ -91,5 +94,22 @@ class AdminConnectionsServiceTest {
 
         adminConnectionsService.upcomingPuzzles();
         verify(connectionsPuzzleRepository).findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today);
+    }
+
+    @Test
+    void upcomingPuzzles_mapsEntitiesToScheduledPuzzleDtos() {
+        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        ConnectionsPuzzle puzzle = new ConnectionsPuzzle(today);
+        puzzle.getGroups().add(new ConnectionsGroup(puzzle, "ხილი", 2));
+        when(connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today))
+                .thenReturn(List.of(puzzle));
+
+        List<ScheduledPuzzle> result = adminConnectionsService.upcomingPuzzles();
+
+        assertEquals(1, result.size());
+        assertEquals(today, result.getFirst().puzzleDate());
+        assertEquals(1, result.getFirst().groups().size());
+        assertEquals("ხილი", result.getFirst().groups().getFirst().category());
+        assertEquals(2, result.getFirst().groups().getFirst().difficulty());
     }
 }

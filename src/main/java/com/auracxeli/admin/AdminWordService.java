@@ -1,5 +1,6 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.admin.dto.ScheduledWord;
 import com.auracxeli.config.UtcDate;
 import com.auracxeli.wordle.InvalidGeorgianWordException;
 import com.auracxeli.wordle.WordleGuessValidator;
@@ -28,10 +29,12 @@ public class AdminWordService {
     private final WordleGuessValidator wordleGuessValidator;
 
     /** Words scheduled for the next {@value #UPCOMING_DAYS} days, earliest first. */
-    public List<WordleWord> upcomingWords() {
+    public List<ScheduledWord> upcomingWords() {
         LocalDate today = UtcDate.today();
         return wordleWordRepository.findByScheduledDateBetweenOrderByScheduledDate(
-                today, today.plusDays(UPCOMING_DAYS - 1));
+                        today, today.plusDays(UPCOMING_DAYS - 1)).stream()
+                .map(AdminWordService::toScheduledWord)
+                .toList();
     }
 
     /**
@@ -45,7 +48,7 @@ public class AdminWordService {
      * @throws DuplicateWordException       if the 60-day uniqueness rule would be violated
      */
     @Transactional
-    public WordleWord addWord(String word, LocalDate requestedDate, Long addedBy) {
+    public ScheduledWord addWord(String word, LocalDate requestedDate, Long addedBy) {
         // An answer must itself be a valid guess, otherwise players could never type it to win.
         if (!wordleGuessValidator.isValid(word)) {
             throw new InvalidGeorgianWordException();
@@ -68,7 +71,7 @@ public class AdminWordService {
 
         WordleWord saved = wordleWordRepository.save(new WordleWord(word, target, addedBy));
         log.info("Admin {} scheduled word for {}", addedBy, saved.getScheduledDate());
-        return saved;
+        return toScheduledWord(saved);
     }
 
     /** The earliest day from today onward that has no word scheduled. */
@@ -78,5 +81,9 @@ public class AdminWordService {
             day = day.plusDays(1);
         }
         return day;
+    }
+
+    private static ScheduledWord toScheduledWord(WordleWord word) {
+        return new ScheduledWord(word.getId(), word.getWord(), word.getScheduledDate());
     }
 }

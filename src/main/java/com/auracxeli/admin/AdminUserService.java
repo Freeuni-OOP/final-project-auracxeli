@@ -1,5 +1,6 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.admin.dto.UserRow;
 import com.auracxeli.user.Role;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserRepository;
@@ -17,26 +18,30 @@ public class AdminUserService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<User> listUsers() {
-        return userRepository.findAllByOrderByUsernameAsc();
+    public List<UserRow> listUsers() {
+        return userRepository.findAllByOrderByUsernameAsc().stream()
+                .map(AdminUserService::toRow)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<User> listUsers(String query) {
+    public List<UserRow> listUsers(String query) {
         String normalizedQuery = query == null ? "" : query.trim();
         if (normalizedQuery.isEmpty()) {
             return listUsers();
         }
         return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByUsernameAsc(
-                normalizedQuery, normalizedQuery);
+                        normalizedQuery, normalizedQuery).stream()
+                .map(AdminUserService::toRow)
+                .toList();
     }
 
     @Transactional
-    public User toggleActive(Long targetUserId, Long adminUserId) {
+    public UserRow toggleActive(Long targetUserId, Long adminUserId) {
         User target = findTarget(targetUserId);
         validateManageable(target, adminUserId);
         target.setActive(!target.isActive());
-        return userRepository.save(target);
+        return toRow(userRepository.save(target));
     }
 
     @Transactional
@@ -58,5 +63,9 @@ public class AdminUserService {
         if (target.getRole() == Role.ADMIN) {
             throw new AdminUserActionDeniedException("ადმინის ანგარიშის დაბლოკვა/წაშლა აკრძალულია");
         }
+    }
+
+    private static UserRow toRow(User user) {
+        return new UserRow(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.isActive());
     }
 }
