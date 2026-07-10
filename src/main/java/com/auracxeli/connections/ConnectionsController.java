@@ -55,7 +55,7 @@ public class ConnectionsController {
 
         try {
             ConnectionsSession updated = connectionsSessionService.submitGuess(session, todaysPuzzle.get(), selection);
-            ConnectionsGuess lastGuess = updated.getGuesses().get(updated.getGuesses().size() - 1);
+            ConnectionsGuess lastGuess = updated.getGuesses().getLast();
             String resultType = connectionsBoardService.classifyGuess(lastGuess, todaysPuzzle.get());
             redirectAttributes.addFlashAttribute("lastGuessResult", resultType);
             if (!"correct".equals(resultType)) {
