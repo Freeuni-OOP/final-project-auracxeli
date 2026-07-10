@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ka" xmlns:th="http://www.thymeleaf.org" th:attr="data-theme=${theme}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ლიდერბორდი</title>
+    <link th:href="@{/css/styles.css}"  href="/static/css/styles.css"  rel="stylesheet" />
+    <link th:href="@{/css/friends.css}" href="/static/css/friends.css" rel="stylesheet" />
+</head>
+<body>
+<header class="site-header">
+    <nav th:replace="~{fragments/navbar :: navbar('leaderboard')}"></nav>
+</header>
+
+<main>
+    <section class="friends container">
+        <h2>ლიდერბორდი</h2>
+
+        <p class="empty" th:if="${!hasFriends}">დაიმატე მეგობრები, რათა ნახო ლიდერბორდი</p>
+
+        <table class="leaderboard" th:if="${hasFriends}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>მომხმარებელი</th>
+                <th>სერია</th>
+                <th>მაქს. სერია</th>
+                <th>მოგებები</th>
+                <th>საშ. შეცდომა</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry, rowStat : ${entries}"
+                th:class="${entry.isCurrentUser} ? 'current-user' : ''">
+                <td th:text="${rowStat.count}"></td>
+                <td>
+                    <a class="leaderboard-profile-link"
+                       th:href="@{/profile/{username}(username=${entry.username})}"
+                       th:text="${entry.username}">user</a>
+                </td>
+                <td th:text="${entry.stats.currentStreak}"></td>
+                <td th:text="${entry.stats.maxStreak}"></td>
+                <td th:text="${entry.stats.gamesWon}"></td>
+                <td th:text="${#numbers.formatDecimal(entry.stats.averageMistakesOnWin, 1, 1)}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
