@@ -5,5 +5,6 @@ public record ConnectionsStatsDto(
         int gamesWon,
         double averageMistakesOnWin,
         int currentStreak,
-        int maxStreak
+        int maxStreak,
+        int winPercent
 ) { }
