@@ -1,5 +1,6 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.admin.dto.UserRow;
 import com.auracxeli.user.Role;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserRepository;
@@ -12,8 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
@@ -31,29 +32,38 @@ class AdminUserServiceTest {
 
     @Test
     void listUsersReturnsUsersOrderedByUsernameTest() {
-        List<User> users = List.of(user(2L, "ana", Role.USER, true));
-        when(userRepository.findAllByOrderByUsernameAsc()).thenReturn(users);
+        when(userRepository.findAllByOrderByUsernameAsc())
+                .thenReturn(List.of(user(2L, "ana", Role.USER, true)));
 
-        assertSame(users, adminUserService.listUsers());
+        List<UserRow> rows = adminUserService.listUsers();
+
+        assertEquals(1, rows.size());
+        assertEquals("ana", rows.get(0).username());
+        assertEquals("ana@example.com", rows.get(0).email());
         verify(userRepository).findAllByOrderByUsernameAsc();
     }
 
     @Test
     void listUsersWithBlankQueryReturnsUsersOrderedByUsernameTest() {
-        List<User> users = List.of(user(2L, "ana", Role.USER, true));
-        when(userRepository.findAllByOrderByUsernameAsc()).thenReturn(users);
+        when(userRepository.findAllByOrderByUsernameAsc())
+                .thenReturn(List.of(user(2L, "ana", Role.USER, true)));
 
-        assertSame(users, adminUserService.listUsers("   "));
+        List<UserRow> rows = adminUserService.listUsers("   ");
+
+        assertEquals(1, rows.size());
+        assertEquals("ana", rows.get(0).username());
         verify(userRepository).findAllByOrderByUsernameAsc();
     }
 
     @Test
     void listUsersWithQuerySearchesUsernameAndEmailTest() {
-        List<User> users = List.of(user(2L, "gio", Role.USER, true));
         when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByUsernameAsc(
-                "gio", "gio")).thenReturn(users);
+                "gio", "gio")).thenReturn(List.of(user(2L, "gio", Role.USER, true)));
 
-        assertSame(users, adminUserService.listUsers(" gio "));
+        List<UserRow> rows = adminUserService.listUsers(" gio ");
+
+        assertEquals(1, rows.size());
+        assertEquals("gio", rows.get(0).username());
         verify(userRepository).findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByUsernameAsc(
                 "gio", "gio");
     }
@@ -64,9 +74,9 @@ class AdminUserServiceTest {
         when(userRepository.findById(2L)).thenReturn(Optional.of(target));
         when(userRepository.save(target)).thenReturn(target);
 
-        User result = adminUserService.toggleActive(2L, 1L);
+        UserRow result = adminUserService.toggleActive(2L, 1L);
 
-        assertSame(target, result);
+        assertFalse(result.active());
         assertFalse(target.isActive());
         verify(userRepository).save(target);
     }
