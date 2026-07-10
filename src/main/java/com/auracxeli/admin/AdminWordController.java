@@ -1,9 +1,9 @@
 package com.auracxeli.admin;
 
 import com.auracxeli.admin.dto.AddWordRequest;
+import com.auracxeli.admin.dto.ScheduledWord;
 import com.auracxeli.user.UserDetailsImpl;
 import com.auracxeli.wordle.InvalidGeorgianWordException;
-import com.auracxeli.wordle.WordleWord;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +42,10 @@ public class AdminWordController {
             log.warn("Word submission rejected: {} validation error(s)", bindingResult.getErrorCount());
         } else {
             try {
-                WordleWord saved = adminWordService.addWord(
+                ScheduledWord saved = adminWordService.addWord(
                         addWordRequest.word(), addWordRequest.scheduledDate(), admin.getId());
                 redirectAttributes.addFlashAttribute("message",
-                        "სიტყვა დაემატა " + saved.getScheduledDate() + "-ზე");
+                        "სიტყვა დაემატა " + saved.scheduledDate() + "-ზე");
                 return "redirect:/admin/words";
             } catch (InvalidGeorgianWordException e) {
                 bindingResult.rejectValue("word", "invalidWord", e.getMessage());
