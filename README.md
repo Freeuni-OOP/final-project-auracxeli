@@ -1,6 +1,6 @@
-# Kartuli Games
+# AuraCxeli
 
-Two browser-based games in Georgian (Wordle and Connections) plus a shared platform - auth, profiles, stats, social features, admin, achievements.
+Two browser-based games, Georgian Wordle and Georgian Connections, plus a shared platform (auth, profiles, stats, social features, admin, achievements, and an archive/practice mode).
 Built with Java 21, Spring Boot 3.4.5, MySQL 8, Thymeleaf, and Spring Security.
 
 ## Prerequisites
@@ -55,13 +55,15 @@ mvn spring-boot:run
 ```
 src/main/java/com/auracxeli/
 ├── MainApplication.java
-├── config/          # SecurityConfig
-├── user/            # auth: entity, repository, service, controller, dto
-├── wordle/          # entity/repository/service (controller + UI in progress)
-├── connections/     # not yet built
-├── social/          # not yet built
-├── achievement/     # not yet built
-└── admin/           # not yet built
+├── config/          # SecurityConfig, GlobalModelAttributes (theme), UtcDate helper
+├── home/            # landing page
+├── user/            # auth, profile, avatar, theme, stats, level/badge
+├── wordle/          # daily word, session/guess tracking, validation, UI
+├── connections/     # daily puzzle, session tracking (4-mistake limit), UI
+├── friend/          # friend requests, friendships, friends leaderboard
+├── admin/           # dashboard, word/puzzle/user management
+├── achievement/     # badge catalog and rules, granted on GameFinishedEvent
+└── archive/         # session-based practice replay of past daily puzzles
 
 src/main/resources/
 ├── db/migration/    # Flyway SQL migrations (V{N}__{description}.sql)
