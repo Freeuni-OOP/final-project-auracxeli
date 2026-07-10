@@ -2,6 +2,7 @@ package com.auracxeli.admin;
 
 import com.auracxeli.admin.dto.ConnectionsGroupRequest;
 import com.auracxeli.admin.dto.CreateConnectionsPuzzleRequest;
+import com.auracxeli.config.UtcDate;
 import com.auracxeli.connections.ConnectionsGroup;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzleRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +27,7 @@ public class AdminConnectionsService {
 
     // this method will return here the puzzles that are scheduled for today and after that too
     public List<ConnectionsPuzzle> upcomingPuzzles() {
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        LocalDate today = UtcDate.today();
         return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today);
     }
 

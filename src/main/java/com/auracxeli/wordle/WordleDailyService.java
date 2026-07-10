@@ -1,11 +1,11 @@
 package com.auracxeli.wordle;
 
+import com.auracxeli.config.UtcDate;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 
@@ -23,7 +23,7 @@ public class WordleDailyService {
      * if no word is scheduled for today.
      */
     public Optional<WordleWord> getTodaysWord() {
-        return getWordForDate(LocalDate.now(ZoneOffset.UTC));
+        return getWordForDate(UtcDate.today());
     }
 
     /**

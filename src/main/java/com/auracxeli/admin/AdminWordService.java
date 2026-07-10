@@ -1,5 +1,6 @@
 package com.auracxeli.admin;
 
+import com.auracxeli.config.UtcDate;
 import com.auracxeli.wordle.InvalidGeorgianWordException;
 import com.auracxeli.wordle.WordleGuessValidator;
 import com.auracxeli.wordle.WordleWord;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +29,7 @@ public class AdminWordService {
 
     /** Words scheduled for the next {@value #UPCOMING_DAYS} days, earliest first. */
     public List<WordleWord> upcomingWords() {
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        LocalDate today = UtcDate.today();
         return wordleWordRepository.findByScheduledDateBetweenOrderByScheduledDate(
                 today, today.plusDays(UPCOMING_DAYS - 1));
     }
@@ -73,7 +73,7 @@ public class AdminWordService {
 
     /** The earliest day from today onward that has no word scheduled. */
     private LocalDate firstFreeDay() {
-        LocalDate day = LocalDate.now(ZoneOffset.UTC);
+        LocalDate day = UtcDate.today();
         while (wordleWordRepository.existsByScheduledDate(day)) {
             day = day.plusDays(1);
         }

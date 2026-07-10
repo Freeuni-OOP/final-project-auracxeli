@@ -1,5 +1,6 @@
 package com.auracxeli.user;
 
+import com.auracxeli.config.UtcDate;
 import com.auracxeli.connections.ConnectionsOutcome;
 import com.auracxeli.connections.ConnectionsSession;
 import com.auracxeli.connections.ConnectionsSessionRepository;
@@ -10,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class ConnectionsStatsService {
 
     public ConnectionsStatsDto getConnectionsStats(Long userId) {
         //puzzle dates are stored in UTC, so compute "today" in UTC too.
-        return getConnectionsStats(userId, LocalDate.now(ZoneOffset.UTC));
+        return getConnectionsStats(userId, UtcDate.today());
     }
 
     // package-private overload with an injectable "today" so streak logic is testable.
