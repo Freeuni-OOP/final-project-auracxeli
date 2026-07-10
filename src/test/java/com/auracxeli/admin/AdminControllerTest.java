@@ -42,7 +42,9 @@ class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/dashboard"))
                 .andExpect(content().string(containsString("/admin/words")))
-                .andExpect(content().string(containsString("/admin/connections")));
+                .andExpect(content().string(containsString("/admin/connections")))
+                .andExpect(content().string(containsString("class=\"container navbar\"")))
+                .andExpect(content().string(containsString("/archive/wordle")));
     }
 
     @Test
