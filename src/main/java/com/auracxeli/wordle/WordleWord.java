@@ -7,8 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "wordle_words")
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WordleWord {
 
     @Id
@@ -35,8 +38,6 @@ public class WordleWord {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    protected WordleWord() {}
 
     public WordleWord(String word, LocalDate scheduledDate, Long addedBy) {
         this.word = word;

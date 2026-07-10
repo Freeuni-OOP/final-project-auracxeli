@@ -5,6 +5,7 @@ import com.auracxeli.friend.dto.LeaderboardEntry;
 import com.auracxeli.user.User;
 import com.auracxeli.user.UserDetailsImpl;
 import com.auracxeli.user.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,15 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class FriendLeaderboardController {
 
     private final FriendLeaderboardService fls;
     private final UserRepository ur;
-
-    public FriendLeaderboardController(FriendLeaderboardService fls, UserRepository ur) {
-        this.fls = fls;
-        this.ur = ur;
-    }
 
     @GetMapping("/friends/leaderboard/wordle")
     public String showWordleLeaderboard(Authentication authentication, Model model) {

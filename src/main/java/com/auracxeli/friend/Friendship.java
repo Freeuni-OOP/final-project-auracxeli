@@ -13,7 +13,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "friendships")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Friendship {
 
     @Id
@@ -46,8 +49,6 @@ public class Friendship {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    protected Friendship() {}
 
     public Friendship(User requester, User addressee) {
         this.requester = requester;

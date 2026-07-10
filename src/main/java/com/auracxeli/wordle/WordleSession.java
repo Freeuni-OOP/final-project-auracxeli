@@ -20,7 +20,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * I store info about one users one attempt that is limited to 1 per day, it is unique in date
@@ -28,6 +31,7 @@ import lombok.Getter;
 @Entity
 @Table(name = "wordle_sessions")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WordleSession {
 
     @Id
@@ -41,6 +45,7 @@ public class WordleSession {
     @Column(name = "puzzle_date", nullable = false)
     private LocalDate puzzleDate;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "outcome", nullable = false, length = 15)
     private WordleOutcome outcome;
@@ -50,8 +55,6 @@ public class WordleSession {
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WordleGuess> guesses = new ArrayList<>();
-
-    protected WordleSession() {}
 
     public WordleSession(User user, LocalDate puzzleDate) {
         this.user = user;
@@ -64,9 +67,5 @@ public class WordleSession {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
-    }
-
-    public void setOutcome(WordleOutcome outcome) {
-        this.outcome = outcome;
     }
 }
