@@ -12,6 +12,14 @@
             <img th:src="@{'/images/avatars/' + ${#authentication.principal.avatar}}"
                  class="nav-avatar" alt="avatar" />
         </a>
+        <div class="nav-dropdown" sec:authorize="isAuthenticated()">
+            <span class="nav-link nav-dropdown-toggle"
+                  th:classappend="${activePage == 'archive'} ? 'active' : ''">არქივი ▾</span>
+            <div class="nav-dropdown-menu">
+                <a class="nav-dropdown-item" th:href="@{/archive/wordle}">Wordle</a>
+                <a class="nav-dropdown-item" th:href="@{/archive/connections}">Connections</a>
+            </div>
+        </div>
         <a class="nav-link"
            th:classappend="${activePage == 'friends'} ? 'active' : ''"
            th:href="@{/friends}"

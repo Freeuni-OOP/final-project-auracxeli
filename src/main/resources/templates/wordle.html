@@ -18,6 +18,11 @@
         </div>
 
         <div th:unless="${noPuzzle}">
+            <div th:if="${practiceDate != null}" class="practice-bar">
+                <a th:href="@{/archive/wordle}">← არქივი</a>
+                <span class="practice-date" th:text="${practiceDate}"></span>
+                <a th:href="@{/archive/wordle/{d}/restart(d=${practiceDate})}">თავიდან</a>
+            </div>
             <p th:if="${error}" class="wordle-error" th:text="${error}"></p>
 
             <p th:if="${outcome != null and outcome.name() == 'WON'}" class="wordle-message win">გილოცავ! გამოიცანი სიტყვა!</p>
@@ -38,7 +43,9 @@
                 <p id="share-feedback" class="wordle-share-feedback" aria-live="polite"></p>
             </div>
             <p id="js-error" class="wordle-error" style="display:none;"></p>
-            <form th:unless="${readOnly}" id="guess-form" class="wordle-form" th:action="@{/wordle/guess}" method="post" novalidate>
+            <form th:unless="${readOnly}" id="guess-form" class="wordle-form"
+                  th:action="${practiceDate != null} ? @{/archive/wordle/{d}/guess(d=${practiceDate})} : @{/wordle/guess}"
+                  method="post" novalidate>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" id="guess-input" name="guess"/>
             </form>
