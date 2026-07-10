@@ -2,6 +2,7 @@ package com.auracxeli.friend;
 
 import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.friend.dto.LeaderboardEntry;
+import com.auracxeli.friend.dto.LeaderboardView;
 import com.auracxeli.user.*;
 import com.auracxeli.user.dto.WordleStatsDto;
 import org.junit.jupiter.api.Test;
@@ -12,13 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
 import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -40,23 +35,20 @@ class FriendLeaderboardControllerTest {
     @MockitoBean
     private UserStatsService userStatsService;
 
-    @MockitoBean
-    private UserRepository userRepository;
+
 
     @MockitoBean
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    private FriendLeaderboardController friendLeaderboardController;
+
 
     @Test
     void wordleLeaderboardLinksUsernamesToProfilesTest() throws Exception {
         User currentUser = user(1L, "me");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(currentUser));
-        when(friendLeaderboardService.buildWordleLeaderboard(currentUser)).thenReturn(List.of(
-                entry(1L, "me", true),
-                entry(2L, "friend", false)
-        ));
+        when(friendLeaderboardService.buildWordleLeaderboard(1L)).thenReturn(
+                new LeaderboardView<>(List.of(entry(1L, "me", true), entry(2L, "friend", false)), true)
+  );
+
 
         mockMvc.perform(get("/friends/leaderboard/wordle").with(authentication(auth(currentUser))))
                 .andExpect(status().isOk())
@@ -69,10 +61,10 @@ class FriendLeaderboardControllerTest {
     @Test
     void wordleLeaderboardWithoutFriendsShowsEmptyStateTest() throws Exception {
         User currentUser = user(1L, "me");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(currentUser));
-        when(friendLeaderboardService.buildWordleLeaderboard(currentUser)).thenReturn(List.of(
-                entry(1L, "me", true)
-        ));
+        when(friendLeaderboardService.buildWordleLeaderboard(1L)).thenReturn(
+                new LeaderboardView<>(List.of(entry(1L, "me", true)), false)
+  );
+
 
         mockMvc.perform(get("/friends/leaderboard/wordle").with(authentication(auth(currentUser))))
                 .andExpect(status().isOk())
@@ -80,15 +72,7 @@ class FriendLeaderboardControllerTest {
                 .andExpect(content().string(containsString("დაიმატე მეგობრები")));
     }
 
-    @Test
-    void wordleLeaderboardMissingAuthenticatedUserThrowsTest() {
-        User currentUser = user(1L, "me");
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        Model model = new ExtendedModelMap();
 
-        assertThrows(IllegalStateException.class,
-                () -> friendLeaderboardController.showWordleLeaderboard(auth(currentUser), model));
-    }
 
     private LeaderboardEntry entry(Long userId, String username, boolean currentUser) {
         return new LeaderboardEntry(userId, username, new WordleStatsDto(1, 1, 100, 1, 1), currentUser);
