@@ -2,10 +2,7 @@ package com.auracxeli.friend;
 
 import com.auracxeli.config.SecurityConfig;
 import com.auracxeli.friend.dto.LeaderboardEntry;
-import com.auracxeli.user.Role;
-import com.auracxeli.user.User;
-import com.auracxeli.user.UserDetailsImpl;
-import com.auracxeli.user.UserRepository;
+import com.auracxeli.user.*;
 import com.auracxeli.user.dto.WordleStatsDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,9 @@ class FriendLeaderboardControllerTest {
 
     @MockitoBean
     private FriendLeaderboardService friendLeaderboardService;
+
+    @MockitoBean
+    private UserStatsService userStatsService;
 
     @MockitoBean
     private UserRepository userRepository;

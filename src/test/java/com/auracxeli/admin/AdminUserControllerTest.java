@@ -1,10 +1,7 @@
 package com.auracxeli.admin;
 
 import com.auracxeli.config.SecurityConfig;
-import com.auracxeli.user.Role;
-import com.auracxeli.user.User;
-import com.auracxeli.user.UserDetailsImpl;
-import com.auracxeli.user.UserRepository;
+import com.auracxeli.user.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,6 +38,9 @@ class AdminUserControllerTest {
 
     @MockitoBean
     private AdminUserService adminUserService;
+
+    @MockitoBean
+    private UserStatsService userStatsService;
 
     @MockitoBean
     private UserDetailsService userDetailsService;

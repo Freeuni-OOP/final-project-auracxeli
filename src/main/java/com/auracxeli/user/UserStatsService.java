@@ -9,7 +9,9 @@ import com.auracxeli.wordle.WordleSessionRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import com.auracxeli.connections.ConnectionsOutcome;
+import com.auracxeli.connections.ConnectionsSessionRepository;
+import com.auracxeli.user.dto.LevelDto;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -22,9 +24,9 @@ import java.util.List;
 public class UserStatsService {
 
     private static final int MAX_GUESSES = 6;
-
+    private static final int GAMES_PER_LEVEL = 5;
     private final WordleSessionRepository sessionRepository;
-
+    private final ConnectionsSessionRepository connectionsSessionRepository;
     public WordleStatsDto getWordleStats(Long userId) {
         //we made puzzle dates UTC so i will use UTC here too.
         return getWordleStats(userId, LocalDate.now(ZoneOffset.UTC));
@@ -52,6 +54,30 @@ public class UserStatsService {
                 wordleCurrentStreak(finished, today),
                 wordleMaxStreak(finished)
         );
+    }
+
+    public LevelDto getLevelInfo(Long userId) {
+        long finishedWordle = sessionRepository.countByUserIdAndOutcomeNot(userId, WordleOutcome.IN_PROGRESS);
+        long finishedConnections = connectionsSessionRepository
+                .countByUserIdAndOutcomeNot(userId, ConnectionsOutcome.IN_PROGRESS);
+
+        int totalFinished = (int) (finishedWordle + finishedConnections);
+
+        LevelDto levelInfo = calculateLevel(totalFinished);
+        log.debug("Computed level for user {}: totalFinished={} -> {}", userId, totalFinished, levelInfo);
+        return levelInfo;
+    }
+
+    static LevelDto calculateLevel(int totalFinishedGames) {
+        if (totalFinishedGames < 0) {
+            throw new IllegalArgumentException("totalFinishedGames cannot be negative");
+        }
+        int level = 1 + totalFinishedGames / GAMES_PER_LEVEL;
+        int gamesIntoLevel = totalFinishedGames % GAMES_PER_LEVEL;
+        int gamesRemaining = GAMES_PER_LEVEL - gamesIntoLevel;
+        int percentComplete = Math.round(gamesIntoLevel * 100f / GAMES_PER_LEVEL);
+
+        return new LevelDto(level, gamesRemaining, percentComplete);
     }
 
     /**
