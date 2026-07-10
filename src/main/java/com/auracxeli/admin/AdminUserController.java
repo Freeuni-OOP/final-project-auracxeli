@@ -1,6 +1,6 @@
 package com.auracxeli.admin;
 
-import com.auracxeli.user.User;
+import com.auracxeli.admin.dto.UserRow;
 import com.auracxeli.user.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +39,8 @@ public class AdminUserController {
                                @AuthenticationPrincipal UserDetailsImpl admin,
                                RedirectAttributes redirectAttributes) {
         try {
-            User user = adminUserService.toggleActive(id, admin.getId());
-            redirectAttributes.addFlashAttribute("message", user.isActive()
+            UserRow user = adminUserService.toggleActive(id, admin.getId());
+            redirectAttributes.addFlashAttribute("message", user.active()
                     ? "მომხმარებელი განიბლოკა"
                     : "მომხმარებელი დაიბლოკა");
         } catch (AdminUserActionDeniedException e) {
