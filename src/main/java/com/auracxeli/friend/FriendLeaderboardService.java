@@ -101,10 +101,8 @@ public class FriendLeaderboardService {
             if (a.stats().currentStreak() != b.stats().currentStreak()) {
                 return b.stats().currentStreak() - a.stats().currentStreak();
             }
-            double rateA = a.stats().gamesPlayed() == 0 ? 0 : (double) a.stats().gamesWon() / a.stats().gamesPlayed();
-            double rateB = b.stats().gamesPlayed() == 0 ? 0 : (double) b.stats().gamesWon() / b.stats().gamesPlayed();
-            if (rateA != rateB) {
-                return Double.compare(rateB, rateA);
+            if (a.stats().winPercent() != b.stats().winPercent()) {
+                return b.stats().winPercent() - a.stats().winPercent();
             }
             return a.username().toLowerCase().compareTo(b.username().toLowerCase());
         });
