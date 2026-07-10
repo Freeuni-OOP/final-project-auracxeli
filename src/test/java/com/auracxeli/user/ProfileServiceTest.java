@@ -1,5 +1,6 @@
 package com.auracxeli.user;
 
+import com.auracxeli.achievement.AchievementService;
 import com.auracxeli.user.dto.ConnectionsHistoryItem;
 import com.auracxeli.user.dto.ConnectionsStatsDto;
 import com.auracxeli.user.dto.GuessBucket;
@@ -32,6 +33,9 @@ class ProfileServiceTest {
 
     @Mock
     private ConnectionsStatsService connectionsStatsService;
+
+    @Mock
+    private AchievementService achievementService;
 
     @InjectMocks
     private ProfileService profileService;
