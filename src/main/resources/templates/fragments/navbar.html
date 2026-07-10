@@ -24,10 +24,14 @@
            th:classappend="${activePage == 'friends'} ? 'active' : ''"
            th:href="@{/friends}"
            sec:authorize="isAuthenticated()">მეგობრები</a>
-        <a class="nav-link"
-           th:classappend="${activePage == 'leaderboard'} ? 'active' : ''"
-           th:href="@{/friends/leaderboard/wordle}"
-           sec:authorize="isAuthenticated()">ლიდერბორდი</a>
+        <div class="nav-dropdown" sec:authorize="isAuthenticated()">
+    <span class="nav-link nav-dropdown-toggle"
+          th:classappend="${activePage == 'leaderboard'} ? 'active' : ''">ლიდერბორდი ▾</span>
+            <div class="nav-dropdown-menu">
+                <a class="nav-dropdown-item" th:href="@{/friends/leaderboard/wordle}">Wordle</a>
+                <a class="nav-dropdown-item" th:href="@{/friends/leaderboard/connections}">Connections</a>
+            </div>
+        </div>
         <a class="nav-link"
            th:classappend="${activePage == 'profile'} ? 'active' : ''"
            th:href="@{/profile}"
