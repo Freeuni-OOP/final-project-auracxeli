@@ -46,7 +46,7 @@ class ProfileServiceTest {
         user.setId(USER_ID);
         user.setCreatedAt(LocalDateTime.of(2026, 6, 20, 12, 0));
         WordleStatsDto wordleStats = new WordleStatsDto(1, 1, 100, 1, 1);
-        ConnectionsStatsDto connectionsStats = new ConnectionsStatsDto(1, 1, 0.0, 1, 1);
+        ConnectionsStatsDto connectionsStats = new ConnectionsStatsDto(1, 1, 0.0, 1, 1,100);
         List<GuessBucket> distribution = List.of(new GuessBucket(1, 1, 100));
         List<WordleHistoryItem> wordleHistory = List.of(
                 new WordleHistoryItem(LocalDate.of(2026, 6, 23), "მოგებული", 3));
