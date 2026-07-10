@@ -125,3 +125,12 @@
 .notice.error {
     color: #b91c1c;
 }
+
+/* Status pills keep their fixed light-tinted backgrounds; brighten the text so it
+   stays readable on a dark surface. */
+[data-theme="dark"] .status-pill.active {
+    color: #7fce77;
+}
+[data-theme="dark"] .status-pill.blocked {
+    color: #f08a8a;
+}
