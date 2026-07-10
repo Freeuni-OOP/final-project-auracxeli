@@ -39,7 +39,7 @@ public class AdminConnectionsController {
             try {
                 var saved = adminConnectionsService.createPuzzle(request);
                 redirectAttributes.addFlashAttribute("message",
-                        "პაზლი დაემატა " + saved.getPuzzleDate() + "-ზე");
+                        "პაზლი დაემატა " + saved.puzzleDate() + "-ზე");
                 return "redirect:/admin/connections";
             } catch (DuplicatePuzzleDateException e) {
                 bindingResult.rejectValue(e.getField(), "duplicate", e.getMessage());

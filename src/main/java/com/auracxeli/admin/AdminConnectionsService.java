@@ -2,6 +2,8 @@ package com.auracxeli.admin;
 
 import com.auracxeli.admin.dto.ConnectionsGroupRequest;
 import com.auracxeli.admin.dto.CreateConnectionsPuzzleRequest;
+import com.auracxeli.admin.dto.ScheduledGroup;
+import com.auracxeli.admin.dto.ScheduledPuzzle;
 import com.auracxeli.connections.ConnectionsGroup;
 import com.auracxeli.connections.ConnectionsPuzzle;
 import com.auracxeli.connections.ConnectionsPuzzleRepository;
@@ -26,15 +28,19 @@ public class AdminConnectionsService {
     private final ConnectionsPuzzleRepository connectionsPuzzleRepository;
 
     // this method will return here the puzzles that are scheduled for today and after that too
-    public List<ConnectionsPuzzle> upcomingPuzzles() {
+    @Transactional(readOnly = true)
+    public List<ScheduledPuzzle> upcomingPuzzles() {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today);
+        return connectionsPuzzleRepository.findByPuzzleDateGreaterThanEqualOrderByPuzzleDate(today).stream()
+                .map(AdminConnectionsService::toScheduledPuzzle)
+                .toList();
     }
 
     // here I create the puzzle for corresponding groups and their words
     // it will throw DuplicatePuzzleDateException if the connection already exists for this date
     // or it will throw the illegal argument exception if the request doesnt have 4 groups and 4 words in each
-    public ConnectionsPuzzle createPuzzle(CreateConnectionsPuzzleRequest request) {
+    @Transactional
+    public ScheduledPuzzle createPuzzle(CreateConnectionsPuzzleRequest request) {
         if (connectionsPuzzleRepository.existsByPuzzleDate(request.puzzleDate())) {
             log.warn("Rejected connections puzzle creation for {}: date already scheduled", request.puzzleDate());
             throw new DuplicatePuzzleDateException("puzzleDate", "ამ თარიღზე უკვე დაგეგმილია პაზლი");
@@ -62,8 +68,13 @@ public class AdminConnectionsService {
 
         ConnectionsPuzzle saved = connectionsPuzzleRepository.save(puzzle);
         log.info("Scheduled connections puzzle for {}", saved.getPuzzleDate());
-        return saved;
+        return toScheduledPuzzle(saved);
+    }
 
-
+    private static ScheduledPuzzle toScheduledPuzzle(ConnectionsPuzzle puzzle) {
+        List<ScheduledGroup> groups = puzzle.getGroups().stream()
+                .map(group -> new ScheduledGroup(group.getCategory(), group.getDifficulty()))
+                .toList();
+        return new ScheduledPuzzle(puzzle.getPuzzleDate(), groups);
     }
 }
