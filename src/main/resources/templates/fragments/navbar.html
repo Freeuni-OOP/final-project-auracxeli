@@ -12,6 +12,10 @@
             <img th:src="@{'/images/avatars/' + ${#authentication.principal.avatar}}"
                  class="nav-avatar" alt="avatar" />
         </a>
+        <a class="nav-link"
+           th:classappend="${activePage == 'admin'} ? 'active' : ''"
+           th:href="@{/admin}"
+           sec:authorize="hasRole('ADMIN')">ადმინი</a>
         <div class="nav-dropdown" sec:authorize="isAuthenticated()">
             <span class="nav-link nav-dropdown-toggle"
                   th:classappend="${activePage == 'archive'} ? 'active' : ''">არქივი ▾</span>
