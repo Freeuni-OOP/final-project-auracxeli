@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -28,6 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -67,7 +69,9 @@ class AdminWordControllerTest {
         mockMvc.perform(get("/admin/words"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/words"))
-                .andExpect(model().attributeExists("addWordRequest", "words"));
+                .andExpect(model().attributeExists("addWordRequest", "words"))
+                .andExpect(content().string(containsString("/css/admin-words.css")))
+                .andExpect(content().string(containsString("class=\"words-table\"")));
     }
 
     @Test
