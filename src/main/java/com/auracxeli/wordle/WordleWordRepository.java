@@ -19,4 +19,7 @@ public interface WordleWordRepository extends JpaRepository<WordleWord, Long> {
 
     // Words scheduled within a date range (the admin "upcoming days" list), earliest first.
     List<WordleWord> findByScheduledDateBetweenOrderByScheduledDate(LocalDate start, LocalDate end);
+
+    // Archive: strictly-past puzzles (today stays the once-only daily), newest first.
+    List<WordleWord> findByScheduledDateLessThanOrderByScheduledDateDesc(LocalDate date);
 }

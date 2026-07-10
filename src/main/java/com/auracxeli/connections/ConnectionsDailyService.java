@@ -16,9 +16,16 @@ public class ConnectionsDailyService {
     private final ConnectionsPuzzleRepository connectionsPuzzleRepository;
     // it returns the scheduled puzzle for today if there is no puzzle scheduled I return empty
     public Optional<ConnectionsPuzzle> getTodaysPuzzle() {
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        Optional<ConnectionsPuzzle> result = connectionsPuzzleRepository.findByPuzzleDate(today);
-        log.debug("Looked up daily puzzle for {}: present={}", today, result.isPresent());
+        return getPuzzleForDate(LocalDate.now(ZoneOffset.UTC));
+    }
+
+    /**
+     * Returns the puzzle scheduled for {@code date}, or empty if none. Used by the
+     * archive to let users practise past puzzles.
+     */
+    public Optional<ConnectionsPuzzle> getPuzzleForDate(LocalDate date) {
+        Optional<ConnectionsPuzzle> result = connectionsPuzzleRepository.findByPuzzleDate(date);
+        log.debug("Looked up puzzle for {}: present={}", date, result.isPresent());
         return result;
     }
 }

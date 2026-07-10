@@ -23,9 +23,16 @@ public class WordleDailyService {
      * if no word is scheduled for today.
      */
     public Optional<WordleWord> getTodaysWord() {
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        Optional<WordleWord> result = wordleWordRepository.findByScheduledDate(today);
-        log.debug("Looked up daily word for {}: present={}", today, result.isPresent());
+        return getWordForDate(LocalDate.now(ZoneOffset.UTC));
+    }
+
+    /**
+     * Returns the word scheduled for {@code date}, or {@link Optional#empty()} if
+     * none. Used by the archive to let users practise past puzzles.
+     */
+    public Optional<WordleWord> getWordForDate(LocalDate date) {
+        Optional<WordleWord> result = wordleWordRepository.findByScheduledDate(date);
+        log.debug("Looked up word for {}: present={}", date, result.isPresent());
         return result;
     }
 }
