@@ -9,12 +9,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-
-
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
-
 
     public Long getId() {
         return user.getId();
@@ -38,8 +35,6 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return user.isActive();
     }
-
-
 
     public String getAvatar() {
         return user.getAvatar();

@@ -50,13 +50,4 @@ public class WordleWord {
             createdAt = LocalDateTime.now();
         }
     }
-
-
-
-
-
-
-
-
-
 }
